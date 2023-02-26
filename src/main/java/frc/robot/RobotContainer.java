@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -44,9 +43,10 @@ public class RobotContainer {
   // CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
 
-  private final TeleopDrive closedFieldRel;
-  private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
-  private final AbsoluteDrive closedAbsoluteDrive;
+  public AbsoluteDrive closedAbsoluteDrive;
+  public AbsoluteFieldDrive closedFieldAbsoluteDrive;
+  public TeleopDrive closedFieldRel;
+  public TeleopDrive simClosedFieldRel;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -77,8 +77,8 @@ public class RobotContainer {
             ? driverXbox.getLeftX()
             : 0,
         () -> driverXbox.getRawAxis(2), false);
-        
-    TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
+    
+    simClosedFieldRel = new TeleopDrive(drivebase,
         () -> (Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND)
             ? driverXbox.getLeftY()
             : 0,
@@ -86,11 +86,13 @@ public class RobotContainer {
             ? driverXbox.getLeftX()
             : 0,
         () -> driverXbox.getRawAxis(2), () -> true, false, true);
+
     closedFieldRel = new TeleopDrive(
         drivebase,
         () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? driverController.getY() : 0,
         () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? driverController.getX() : 0,
         () -> driverXbox.getRightX(), () -> true, false, true);
+
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
   }
 
