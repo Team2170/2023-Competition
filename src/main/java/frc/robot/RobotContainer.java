@@ -18,7 +18,11 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive2.auto.Autos;
 import frc.robot.commands.swervedrive2.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive2.drivebase.AbsoluteFieldDrive;
+import frc.robot.commands.swervedrive2.drivebase.SelectableDrive;
 import frc.robot.commands.swervedrive2.drivebase.TeleopDrive;
+import frc.robot.commands.swervedrive2.drivebase.modes.Absolute;
+import frc.robot.commands.swervedrive2.drivebase.modes.AbsoluteField;
+import frc.robot.commands.swervedrive2.drivebase.modes.Teleop;
 import frc.robot.subsystems.swervedrive2.SwerveSubsystem;
 import java.io.File;
 
@@ -48,14 +52,16 @@ public class RobotContainer {
   public TeleopDrive closedFieldRel;
   public TeleopDrive simClosedFieldRel;
 
+  public SelectableDrive selectableDrive;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    
 
-    closedAbsoluteDrive = new AbsoluteDrive(drivebase,
+
+    Absolute AbsoluteHandler = new Absolute(drivebase,
         // Applies deadbands and inverts controls because joysticks
         // are back-right positive while robot
         // controls are front-left positive
@@ -69,14 +75,14 @@ public class RobotContainer {
         () -> -driverXbox.getRightY(),
         false);
 
-    closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
+    AbsoluteField AbsoluteFieldHandler = new AbsoluteField(drivebase,
         () -> (Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND)
             ? driverXbox.getLeftY()
             : 0,
         () -> (Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND)
             ? driverXbox.getLeftX()
             : 0,
-        () -> driverXbox.getRawAxis(2), false);
+        () -> driverXbox.getRightX(), false);
     
     simClosedFieldRel = new TeleopDrive(drivebase,
         () -> (Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND)
@@ -85,15 +91,17 @@ public class RobotContainer {
         () -> (Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND)
             ? driverXbox.getLeftX()
             : 0,
-        () -> driverXbox.getRawAxis(2), () -> true, false, true);
-
-    closedFieldRel = new TeleopDrive(
-        drivebase,
-        () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? driverController.getY() : 0,
-        () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? driverController.getX() : 0,
         () -> driverXbox.getRightX(), () -> true, false, true);
 
-    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    Teleop TeleopHandler = new Teleop(
+        drivebase,
+        () -> (Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND) ? driverXbox.getLeftY() : 0,
+        () -> (Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND) ? driverXbox.getLeftX() : 0,
+        () -> driverXbox.getRightX(), () -> true, false, true);
+
+    selectableDrive = new SelectableDrive(drivebase, AbsoluteHandler, AbsoluteFieldHandler, TeleopHandler);
+    configureBindings();
+    drivebase.setDefaultCommand(selectableDrive);
   }
 
   /**
@@ -112,15 +120,14 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-    new JoystickButton(driverXbox, Constants.XboxControllerConstants.A_BUTTON_ID)
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.LB_BUTTON_ID)
         .onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverXbox, Constants.XboxControllerConstants.B_BUTTON_ID)
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.RB_BUTTON_ID)
         .onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    new JoystickButton(driverXbox, Constants.XboxControllerConstants.LB_BUTTON_ID).onTrue(closedFieldRel);
-    new JoystickButton(driverXbox, Constants.XboxControllerConstants.RB_BUTTON_ID).onTrue(closedAbsoluteDrive);
-    new JoystickButton(driverXbox, Constants.XboxControllerConstants.X_BUTTON_ID).onTrue(closedFieldAbsoluteDrive);
-    new JoystickButton(driverXbox, Constants.XboxControllerConstants.Y_BUTTON_ID)
-        .whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.A_BUTTON_ID).onTrue(new InstantCommand(selectableDrive::enable_telop));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.B_BUTTON_ID).onTrue(new InstantCommand(selectableDrive::enable_absolutefield));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.X_BUTTON_ID).onTrue(new InstantCommand(selectableDrive::enable_absolute));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.Y_BUTTON_ID).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 
   /**
