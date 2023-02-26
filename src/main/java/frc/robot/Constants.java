@@ -49,4 +49,26 @@ public final class Constants
     public static final double LEFT_X_DEADBAND = 0.01;
     public static final double LEFT_Y_DEADBAND = 0.01;
   }
+
+  public final class XboxControllerConstants{
+    /* Button Mappings */
+    public static final int    A_BUTTON_ID                 = 1;
+    public static final int    B_BUTTON_ID                 = 2;
+    public static final int    X_BUTTON_ID                 = 3;
+    public static final int    Y_BUTTON_ID                 = 4;
+    public static final int    LB_BUTTON_ID                = 5;
+    public static final int    RB_BUTTON_ID                = 6;
+    public static final int    BACK_BUTTON_ID              = 7;
+    public static final int    START_BUTTON_ID             = 8;
+    public static final int    LEFT_THUMBSTIKC_BUTTON_ID   = 9;
+    public static final int    RIGHT_THUMBSTICK_BUTTON_ID  = 10;
+    
+    /* Axis Mappings */
+    public static final int    LEFT_THUMBSTICK_X_AXIS_ID   = 0;
+    public static final int    LEFT_THUMBSTICK_Y_AXIS_ID   = 1;
+    public static final int    LEFT_TRIGGER_AXIS_ID        = 2;
+    public static final int    RIGHT_TRIGGER_AXIS_ID       = 3;
+    public static final int    RIGHT_THUMBSTICK_X_AXIS_ID  = 4;
+    public static final int    RIGHT_THUMBSTICK_Y_AXIS_ID  = 5;
+  }
 }

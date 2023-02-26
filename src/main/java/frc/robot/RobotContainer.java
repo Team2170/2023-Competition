@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -39,6 +41,12 @@ public class RobotContainer
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
 
+
+
+  private final TeleopDrive closedFieldRel;
+  private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
+  private final AbsoluteDrive closedAbsoluteDrive;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -47,7 +55,7 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
 
-    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
+    closedAbsoluteDrive = new AbsoluteDrive(drivebase,
                                                           // Applies deadbands and inverts controls because joysticks
                                                           // are back-right positive while robot
                                                           // controls are front-left positive
@@ -61,7 +69,7 @@ public class RobotContainer
                                                           () -> -driverXbox.getRightY(),
                                                           false);
 
-    AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
+    closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
                                                                          () -> (Math.abs(driverXbox.getLeftY()) >
                                                                                 OperatorConstants.LEFT_Y_DEADBAND)
                                                                                ? driverXbox.getLeftY() : 0,
@@ -77,12 +85,11 @@ public class RobotContainer
                                                            OperatorConstants.LEFT_X_DEADBAND)
                                                           ? driverXbox.getLeftX() : 0,
                                                     () -> driverXbox.getRawAxis(2), () -> true, false, true);
-    TeleopDrive closedFieldRel = new TeleopDrive(
+    closedFieldRel = new TeleopDrive(
         drivebase,
         () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? driverController.getY() : 0,
         () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? driverController.getX() : 0,
         () -> -driverController.getRawAxis(3), () -> true, false, true);
-
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
   }
 
@@ -97,9 +104,12 @@ public class RobotContainer
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-    new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.A_BUTTON_ID).onTrue((new InstantCommand(drivebase::zeroGyro)));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.B_BUTTON_ID).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.LB_BUTTON_ID).onTrue(closedFieldRel);
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.RB_BUTTON_ID).onTrue(closedAbsoluteDrive);
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.X_BUTTON_ID).onTrue(closedFieldAbsoluteDrive);
+    new JoystickButton(driverXbox, Constants.XboxControllerConstants.Y_BUTTON_ID).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 
   /**
