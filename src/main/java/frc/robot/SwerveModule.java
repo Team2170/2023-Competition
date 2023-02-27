@@ -23,9 +23,12 @@ public class SwerveModule {
     private TalonFX mDriveMotor;
     private CANCoder angleEncoder;
 
+    private double mod_location_x;
+    private double mod_location_y;
+
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
-    public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
+    public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants,double mod_location_x , double mod_location_y){
         this.moduleNumber = moduleNumber;
         this.angleOffset = moduleConstants.angleOffset;
         
@@ -42,6 +45,9 @@ public class SwerveModule {
         configDriveMotor();
 
         lastAngle = getState().angle;
+
+        mod_location_x = mod_location_x;
+        mod_location_y = mod_location_y;
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
