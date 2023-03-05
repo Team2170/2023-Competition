@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -20,16 +21,16 @@ public class TeleopCommand extends CommandBase {
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
-    private DoubleSupplier manualDirection;
     private BooleanSupplier loading;
     private BooleanSupplier low;
     private BooleanSupplier mid;
     private BooleanSupplier high;
     private BooleanSupplier leftTrigger;
     private BooleanSupplier rightTrigger;
+    private XboxController operator;
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
-            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm, DoubleSupplier manualDirection,
+            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
             BooleanSupplier loading, BooleanSupplier low, BooleanSupplier mid, BooleanSupplier high,
             BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, AutoBalancer s_Balancer) {
         this.s_Swerve = s_Swerve;
@@ -41,13 +42,13 @@ public class TeleopCommand extends CommandBase {
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
-        this.manualDirection = manualDirection;
         this.loading = loading;
         this.low = low;
         this.mid = mid;
         this.high = high;
         this.leftTrigger = leftTrigger;
         this.rightTrigger = rightTrigger;
+        this.operator = new XboxController(1);
     }
 
     @Override
@@ -84,11 +85,16 @@ public class TeleopCommand extends CommandBase {
 
         /* Operator */
         boolean ManualMode = false;
-        if (this.manualDirection.getAsDouble() > 0.3) {
+        var manDir = this.operator.getLeftY();
+        System.out.println("Arm Movement Dir - "+ manDir);
+        if (manDir > 0.1) {
+            ManualMode = true;
+        }        
+        if (manDir < -0.1) {
             ManualMode = true;
         }
         s_Arm.periodic(loading.getAsBoolean(), low.getAsBoolean(), mid.getAsBoolean(), high.getAsBoolean(), ManualMode,
-                this.manualDirection.getAsDouble());
+               manDir);
 
     }
 }

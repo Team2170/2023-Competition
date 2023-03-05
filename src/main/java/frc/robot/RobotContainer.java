@@ -24,13 +24,13 @@ public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
     private final Joystick operator = new Joystick(1);
+    private final XboxController opController = new XboxController(1);
+    
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
-    /* OperatorControls */
-    private final int manualArmDirection = XboxController.Axis.kLeftY.value;
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
@@ -58,12 +58,13 @@ public class RobotContainer {
                         () -> driver.getRawAxis(rotationAxis),
                         () -> robotCentric.getAsBoolean(),
                         s_arm,
-                        () -> operator.getRawAxis(manualArmDirection),
                         () -> loadingButton.getAsBoolean(),
                         () -> lowButton.getAsBoolean(),
                         () -> midButton.getAsBoolean(),
                         () -> highButton.getAsBoolean(),
-                        () -> leftTrigger.getAsBoolean(), () -> rightTrigger.getAsBoolean(), s_Balancer));
+                        () -> leftTrigger.getAsBoolean(),
+                        () -> rightTrigger.getAsBoolean(),
+                         s_Balancer));
 
         // Configure the button bindings
         configureButtonBindings();

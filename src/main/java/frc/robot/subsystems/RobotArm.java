@@ -27,20 +27,23 @@ public class RobotArm extends SubsystemBase {
     public int setpoint = 0;
 
     public RobotArm() {
-        joint1 = new MotorGroup(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderPort1Id,Constants.LowerArm.EncoderPort2Id, 0.1, 0.1, 0.1, 1, 100,"Lower");
-        joint2 = new MotorGroup(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderPort1Id,Constants.UpperArm.EncoderPort2Id, 0.1, 0.1, 0.1, 1, 100,"Upper");
+        joint1 = new MotorGroup(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderId, 0.1, 0.1, 0.1, 1, 100,"Lower");
+        joint2 = new MotorGroup(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderId, 0.1, 0.1, 0.1, 1, 100,"Upper");
         pnueJoint1 = new PnuematicsGroup(Constants.ph);
     }
 
     public void periodic(Boolean loading,Boolean low,Boolean mid,Boolean high,Boolean isManual, double manualDirection) {
         if( isManual )
         {
-            if(manualDirection > 0.3)
+            
+            if(manualDirection > 0.1)
             {
                 joint1.raise_arm_manually();
-            }else if(manualDirection < -0.3)
+                joint2.raise_arm_manually();
+            }else if(manualDirection < -0.1)
             {
                 joint1.lower_arm_manually();
+                joint2.lower_arm_manually();
 
             }else{
             }
