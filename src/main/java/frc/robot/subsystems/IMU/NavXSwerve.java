@@ -19,6 +19,7 @@ public class NavXSwerve
    * Offset for the NavX yaw reading.
    */
   private double yawOffset = 0;
+  private double pitchOffset = 0;
 
   /**
    * Constructor for the NavX swerve.
@@ -64,6 +65,18 @@ public class NavXSwerve
     // gyro.reset(); // Reported to be slow using the offset.
     yawOffset = (yaw % 360) + (gyro.getYaw() % 360);
   }
+ /**
+   * Set the yaw in degrees.
+   *
+   * @param yaw Yaw angle in degrees.
+   */
+  public void setPitch(double pitch)
+  {
+    // gyro.reset(); // Reported to be slow using the offset.
+    pitchOffset = (pitch % 360) + (gyro.getPitch() % 360);
+  }
+
+
 
   /**
    * Fetch the yaw/pitch/roll from the IMU.
@@ -81,6 +94,11 @@ public class NavXSwerve
   {
     return (gyro.getYaw() % 360) - yawOffset;
   }
+  public double getPitch()
+  {
+    return (gyro.getPitch() % 360) - pitchOffset;
+  }
+
 
   /**
    * Get the instantiated IMU object.

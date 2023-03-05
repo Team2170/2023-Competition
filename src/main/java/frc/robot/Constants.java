@@ -146,4 +146,58 @@ public final class Constants {
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
+
+    public static int ph = 30;
+    public static final class LowerArm { 
+        public static final int MasterId = 31;
+        public static final int FollowerId = 32;
+        public static final int EncoderPort1Id = 0;
+        public static final int EncoderPort2Id = 1;
+        public final class armPositons {
+            public static final double REST = 0;
+            public static final double LOW = 0;
+            public static final double MID = 40;
+            public static final double HIGH = 120;
+            public static final double LOADING = 0; 
+        }
+    }    
+    public static final class UpperArm {
+        public static final int MasterId = 33;
+        public static final int FollowerId = 34;
+        public static final int EncoderPort1Id = 8;
+        public static final int EncoderPort2Id = 9;
+        public final class armPositons {
+            public static final double REST = 0;
+            public static final double LOW = 0;
+            public static final double MID = 40;
+            public static final double HIGH = 120;
+            public static final double LOADING = 0; 
+        }
+    }
+    public static final class PnueMatics{
+        public static final int forwardChannel = 10;
+        public static final int reverseChannel = 11;
+    }
+
+    public static final class controller{
+        /* Button Mappings */
+        private static final int    A_BUTTON_ID                 = 1;
+        private static final int    B_BUTTON_ID                 = 2;
+        private static final int    X_BUTTON_ID                 = 3;
+        private static final int    Y_BUTTON_ID                 = 4;
+        private static final int    LB_BUTTON_ID                = 5;
+        private static final int    RB_BUTTON_ID                = 6;
+        private static final int    BACK_BUTTON_ID              = 7;
+        private static final int    START_BUTTON_ID             = 8;
+        private static final int    LEFT_THUMBSTIKC_BUTTON_ID   = 9;
+        private static final int    RIGHT_THUMBSTICK_BUTTON_ID  = 10;
+        
+        /* Axis Mappings */
+        private static final int    LEFT_THUMBSTICK_X_AXIS_ID   = 0;
+        private static final int    LEFT_THUMBSTICK_Y_AXIS_ID   = 1;
+        private static final int    LEFT_TRIGGER_AXIS_ID        = 2;
+        private static final int    RIGHT_TRIGGER_AXIS_ID       = 3;
+        private static final int    RIGHT_THUMBSTICK_X_AXIS_ID  = 4;
+        private static final int    RIGHT_THUMBSTICK_Y_AXIS_ID  = 5;
+    }
 }
