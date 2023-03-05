@@ -27,65 +27,30 @@ public class RobotArm extends SubsystemBase {
     public int setpoint = 0;
 
     public RobotArm() {
-        joint1 = new MotorGroup(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderId, 0.1, 0.1, 0.1, 1, 100,"Lower");
-        joint2 = new MotorGroup(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderId, 0.1, 0.1, 0.1, 1, 100,"Upper");
+        joint2 = new MotorGroup(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderAId,Constants.LowerArm.EncoderBId, 0.1, 0.1, 0.1, 1, 100,"Lower");
+        joint1 = new MotorGroup(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderAId,Constants.UpperArm.EncoderBId, 0.1, 0.1, 0.1, 1, 100,"Upper");
         pnueJoint1 = new PnuematicsGroup(Constants.ph);
     }
 
     public void periodic(Boolean loading,Boolean low,Boolean mid,Boolean high,Boolean isManual, double manualDirection) {
         if( isManual )
         {
-            
-            if(manualDirection > 0.1)
+            if(manualDirection > 0.2)
             {
                 joint1.raise_arm_manually();
-                joint2.raise_arm_manually();
-            }else if(manualDirection < -0.1)
+                //joint2.raise_arm_manually();
+            }else if(manualDirection < -0.2)
             {
                 joint1.lower_arm_manually();
-                joint2.lower_arm_manually();
-
+                //joint2.lower_arm_manually();
             }else{
-            }
-        }
-        else
-        {
-            boolean arm_moved = false;
-            if(loading)
-            {
-                joint1.raise_arm_loading_position();
-                //joint2.raise_arm_loading_position();
-                arm_moved = true;
-            }
-            else if(low)
-            {
-                joint1.raise_arm_low_scoring();
-                //joint2.raise_arm_low_scoring();
-                arm_moved = true;
-            }
-            else if(mid)
-            {
-                joint1.raise_arm_mid_scoring();
-                //joint2.raise_arm_mid_scoring();
-                arm_moved = true;
-            }
-            else if(high)
-            {
-                joint1.raise_arm_high_scoring();
-                //joint2.raise_arm_high_scoring();
-                arm_moved = true;
-
-            }
-            else{
                 joint1.stop_arm();
                 //joint2.stop_arm();
             }
-            if (arm_moved)
-            {
-                //joint1.operate();
-                //joint2.operate();
-            }
         }
+    }
+    public void DisplayEncoder()
+    {
         joint1.DisplayEncoder();
         joint2.DisplayEncoder();
     }

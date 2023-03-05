@@ -27,7 +27,6 @@ public class TeleopCommand extends CommandBase {
     private BooleanSupplier high;
     private BooleanSupplier leftTrigger;
     private BooleanSupplier rightTrigger;
-    private XboxController operator;
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
             DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
@@ -48,7 +47,6 @@ public class TeleopCommand extends CommandBase {
         this.high = high;
         this.leftTrigger = leftTrigger;
         this.rightTrigger = rightTrigger;
-        this.operator = new XboxController(1);
     }
 
     @Override
@@ -82,19 +80,6 @@ public class TeleopCommand extends CommandBase {
                     !robotCentricSup.getAsBoolean(),
                     true);
         }
-
-        /* Operator */
-        boolean ManualMode = false;
-        var manDir = this.operator.getLeftY();
-        System.out.println("Arm Movement Dir - "+ manDir);
-        if (manDir > 0.1) {
-            ManualMode = true;
-        }        
-        if (manDir < -0.1) {
-            ManualMode = true;
-        }
-        s_Arm.periodic(loading.getAsBoolean(), low.getAsBoolean(), mid.getAsBoolean(), high.getAsBoolean(), ManualMode,
-               manDir);
 
     }
 }

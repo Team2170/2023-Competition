@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.swing.GroupLayout.Group;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -23,12 +25,15 @@ public class MotorGroup {
     private double kEncoderTickToFeet = 1/128*6*Math.PI/12;
     private double setPoint = 45;
     public String GroupName;
-    public DutyCycleEncoder encoder;
     public double lastPos = 0.0;
+    public double faked_lower_bound = 0.00;
+    public double faked_upper_bound = 0.00;
+    public boolean bounds_set = false;
+    public Encoder encoder;
 
-    public MotorGroup(int masterId, int followerId, int encoderId1, double kP, double kI, double kD, double iLimit, double maxOutput, String name) {        
+    public MotorGroup(int masterId, int followerId, int encoderId1,int encoderId2, double kP, double kI, double kD, double iLimit, double maxOutput, String name) {        
         this.maxOutput = maxOutput;
-        encoder = new DutyCycleEncoder(encoderId1);
+        encoder = new Encoder(encoderId1, encoderId2,true,EncodingType.k4X);
         masterTalonSRX = new TalonSRX(masterId);
         followerTalonSRX = new TalonSRX(followerId);
         pidController = new PIDController(kP, kI, kD);
@@ -39,8 +44,7 @@ public class MotorGroup {
         followerTalonSRX.configFactoryDefault();
 
         followerTalonSRX.follow(masterTalonSRX);
-        // Set to 0.5 units per rotation
-        encoder.setDistancePerRotation(0.05);
+        encoder.reset();
         GroupName = name;
     }
     public void driveMotors(double speed) {
@@ -49,15 +53,11 @@ public class MotorGroup {
 
     public void operate()
     {
-        // Get Encoder Position
-        sensorPosition = encoder.get() * kEncoderTickToFeet;
-        //Get Error.
-        error = setPoint - sensorPosition;  // difference between setpoint/reference and current point
-        output = MathUtil.clamp(pidController.calculate(error), -maxOutput, maxOutput);
-        System.out.println(output);
-        driveMotors(output);
     }
     
+    public void initialize_bounds()
+    {
+    }
     public void setTargetPoint(double value){
         setPoint = value;
     }
@@ -74,53 +74,51 @@ public class MotorGroup {
     * @return      void
     */
     public void lower_arm_manually() {
-        if(allowArmMovement() == false)
-        {
-            stop_arm();
-            return;
-        }
-        driveMotors(-0.05);
+        driveMotors(-0.1);
     }
 
     public boolean allowArmMovement()
     {
-        if( GroupName == "Upper")
+        if(GroupName == "Upper")
         {
-            if( encoder.get() <= Constants.UpperArm.lowerbound)
-            {
-                return false;
-            }
-            if( encoder.get() >= Constants.UpperArm.upperbound)
-            {
-                return false;
-            }
+            return validate_upper();
         }
-        if( GroupName == "Lower")
+        if(GroupName == "Lower")
         {
-            if( encoder.get() <= Constants.LowerArm.lowerbound)
-            {
-                return false;
-            }
-            if( encoder.get() >= Constants.LowerArm.upperbound)
-            {
-                return false;
-            }
+            return validate_lower();
+        }
+        return false;
+    }
+    public boolean validate_lower()
+    {
+        if(encoder.get() <= Constants.LowerArm.lowerbound)
+        {
+            return false;
+        }
+        if(encoder.get() >= Constants.LowerArm.upperbound)
+        {
+            return false;
         }
         return true;
     }
-
+    public boolean validate_upper()
+    {
+        if(encoder.get() <= faked_lower_bound)
+        {
+            return false;
+        }
+        if(encoder.get() >= faked_upper_bound)
+        {
+            return false;
+        }
+        return true;
+    }
     /** Raises the robot based on human input on the controller.
     *
     * @return      void
     */
     public void raise_arm_manually() {
-
-        if(allowArmMovement() == false)
-        {
-            stop_arm();
-            return;
-        }
-        driveMotors(0.05);
+        driveMotors(0.4);
     }
     /** Raises the robot arm to the loading position
     *
@@ -202,17 +200,6 @@ public class MotorGroup {
 
     public void DisplayEncoder()
     {
-        // Connected can be checked, and uses the frequency of the encoder
-        boolean connected = encoder.isConnected();
-        if (!connected)
-        {
-            output = lastPos;
-            SmartDashboard.putNumber(GroupName + "Output", output);
-            return;
-        }
-
-        // Duty Cycle Frequency in Hz
-        int frequency = encoder.getFrequency();
 
         // Output of encoder
         double output = encoder.get();
@@ -220,10 +207,11 @@ public class MotorGroup {
         // Output scaled by DistancePerPulse
         double distance = encoder.getDistance();
 
-        SmartDashboard.putBoolean(GroupName + "Connected", connected);
-        SmartDashboard.putNumber(GroupName + "Frequency", frequency);
+        //double raw = encoder.getRaw();
+
         SmartDashboard.putNumber(GroupName + "Output", output);
         SmartDashboard.putNumber(GroupName + "Distance", distance);
+        //SmartDashboard.putNumber(GroupName + "Raw", raw);
 
         lastPos = output;
     }

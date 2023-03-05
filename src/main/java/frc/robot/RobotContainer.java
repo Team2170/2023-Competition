@@ -23,9 +23,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
-    private final Joystick operator = new Joystick(1);
-    private final XboxController opController = new XboxController(1);
-    
+    private final XboxController operator = new XboxController(1);
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -92,6 +90,31 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         return new exampleAuto(s_Swerve);
+    }
+
+    public void periodic()
+    {
+        s_arm.joint1.initialize_bounds();
+        s_arm.joint2.initialize_bounds();
+
+        /* Operator */
+        boolean ManualMode = false;
+        var manDir = this.operator.getLeftY();
+        if (manDir > 0.2) {
+            ManualMode = true;
+        }        
+        if (manDir < -0.2) {
+            ManualMode = true;
+        }
+        if(ManualMode){
+            System.out.println("Arm Movement Dir Manual Mode "+ manDir);
+        }
+        if(ManualMode)
+        {
+            s_arm.periodic(loadingButton.getAsBoolean(), lowButton.getAsBoolean(), midButton.getAsBoolean(), highButton.getAsBoolean(), ManualMode,
+            manDir);
+        }
+        s_arm.DisplayEncoder();
     }
 
 }

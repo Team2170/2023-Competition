@@ -153,11 +153,12 @@ public final class Constants {
     }
 
     public static final class LowerArm{
-        public static double lowerbound = -0.02384737559;
-        public static double upperbound = -0.054;
-        public static int MasterId = 30;
-        public static int FollowerId = 33;
-        public static int EncoderId = 9;
+        public static double lowerbound = 0.466;
+        public static double upperbound = 0.88;
+        public static int MasterId = 32;
+        public static int FollowerId = 31;
+        public static int EncoderAId = 1;
+        public static int EncoderBId = 0;
         public static final class armPositons {
             public static final double REST = 0;
             public static final double LOW = 10;
@@ -167,11 +168,12 @@ public final class Constants {
         }
     }
     public static final class UpperArm{
-        public static double lowerbound = -0.18344357958;
-        public static double upperbound = -0.80;
-        public static int MasterId = 32;
-        public static int FollowerId = 31;
-        public static int EncoderId = 5;
+        public static double lowerbound = -0.218;
+        public static double upperbound = -0.176;
+        public static int MasterId = 30;
+        public static int FollowerId = 33;
+        public static int EncoderAId = 3;
+        public static int EncoderBId = 2;
         public static final class armPositons {
             public static final double REST = 0;
             public static final double LOW = 10;
