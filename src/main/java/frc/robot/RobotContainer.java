@@ -38,14 +38,14 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton lockButton = new JoystickButton(driver, XboxController.Button.kB.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kA.value);
-    private final JoystickButton leftTrigger = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton rightTrigger = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
-    /* Operator Buttons */
+ /* Operator Buttons */
     private final JoystickButton loadingButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton lowButton = new JoystickButton(operator, XboxController.Button.kX.value);
     private final JoystickButton midButton = new JoystickButton(operator, XboxController.Button.kB.value);
     private final JoystickButton highButton = new JoystickButton(operator, XboxController.Button.kY.value);
-
+    private final JoystickButton leftTrigger = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton rightTrigger = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+   
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final RobotArm s_arm = new RobotArm();
@@ -103,7 +103,7 @@ public class RobotContainer {
         var upper_part_manual_direction = this.operator.getRawAxis(ArmUpperDirection);
         var lower_part_manual_direction = this.operator.getRawAxis(ArmLowerDirection);
         var grab_button = rightTrigger.getAsBoolean();
-        var release_button =leftTrigger.getAsBoolean();
+        var release_button = leftTrigger.getAsBoolean();
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
         s_arm.DisplayEncoder();
     }

@@ -29,12 +29,7 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void lower_arm_manually() {
-        double buffer = super.GetLowerBound() - (super.GetLowerBound() * 0.02);
-        if(encoder.get() <= buffer ){
-            stop_arm();
-            return;
-        }
-        driveMotors(-0.4);
+        driveMotors(-0.3);
     };
 
     /**
@@ -43,12 +38,7 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void raise_arm_manually() {
-        double buffer = super.GetUpperBound() - (super.GetUpperBound() * 0.02);
-        if(encoder.get() >= buffer ){
-            stop_arm();
-            return;
-        }
-        driveMotors(0.4);
+        driveMotors(0.3);
     };
 
     public void DisplayEncoder() {
@@ -59,9 +49,12 @@ public class LowerArm extends ArmMotorGroup {
      * Controls the motors.
      *
      * @return void
+     * We discovered one of the motors is working against the other.
+     * This should map one inverted.
      */
     public void driveMotors(double speed) {
         super.GetMaster().set(ControlMode.PercentOutput, speed);
+        super.GetFollower().set(ControlMode.PercentOutput, -speed);
     }
 
     public void operate_arm(double manualDirection){

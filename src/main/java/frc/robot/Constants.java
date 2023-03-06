@@ -148,8 +148,8 @@ public final class Constants {
     }
 
     public static final class PnueMatics{
-        public static final int forwardChannel = 10;
-        public static final int reverseChannel = 11;
+        public static final int forwardChannel = 11;
+        public static final int reverseChannel = 10;
     }
 
     public static final class LowerArm{
@@ -159,6 +159,8 @@ public final class Constants {
         public static int FollowerId = 31;
         public static int EncoderAId = 1;
         public static int EncoderBId = 0;
+        public static double upwardspeed = 0.2;
+        public static double downwardspeed = 0.04;
         public static final class armPositons {
             public static final double REST = 0.55 * 8192;
             public static final double LOW = .083 * 8192;
@@ -174,6 +176,8 @@ public final class Constants {
         public static int FollowerId = 33;
         public static int EncoderAId = 3;
         public static int EncoderBId = 2;
+        public static double upwardspeed = 0.2;
+        public static double downwardspeed = 0.04;
         public static final class armPositons {
             public static final double REST = 0.55 * 8192;
             public static final double LOW = .50 * 8192;
