@@ -153,8 +153,8 @@ public final class Constants {
     }
 
     public static final class LowerArm{
-        public static double lowerbound = 800;
-        public static double upperbound = 1000;
+        public static double lowerbound = 250;
+        public static double upperbound = -830;
         public static int MasterId = 32;
         public static int FollowerId = 31;
         public static int EncoderAId = 1;
@@ -170,8 +170,8 @@ public final class Constants {
         }
     }
     public static final class UpperArm{
-        public static double lowerbound = 1000;
-        public static double upperbound = 2000;
+        public static double lowerbound = -67;
+        public static double upperbound = -1756;
         public static int MasterId = 30;
         public static int FollowerId = 33;
         public static int EncoderAId = 3;
