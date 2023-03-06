@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import frc.robot.subsystems.MotorGroup;
 import frc.robot.subsystems.IMU.NavXSwerve;
 
 public class AutoBalancer extends SubsystemBase {
@@ -64,7 +63,8 @@ public class AutoBalancer extends SubsystemBase {
         
     }
 
-    public void periodic(NavXSwerve robotGyro) {
+    public boolean periodic(NavXSwerve robotGyro) {
+        boolean lock = false;
         // This method will be called once per scheduler run
         if (Math.abs(sensorAngle) - setPointAngle > 2.5) {
             balance(robotGyro);
@@ -72,17 +72,21 @@ public class AutoBalancer extends SubsystemBase {
                 System.out.println("Driving forward");
                 translationVal = 0.05;
                 strafeVal = 0.00;
+                lock = false;
             } else if (sensorAngle > setPointAngle) {
                 System.out.println("Driving backwards");
                 translationVal = -0.05;
                 strafeVal = 0.00;
+                lock = false;
             }
             else if (sensorAngle == setPointAngle) {
                 System.out.println("Level");
                 translationVal = 0.00;
                 strafeVal = 0.00;
+                lock = true;
             }
         }
+        return lock;
     }
 
     @Override

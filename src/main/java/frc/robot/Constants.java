@@ -153,33 +153,33 @@ public final class Constants {
     }
 
     public static final class LowerArm{
-        public static double lowerbound = 0.466;
-        public static double upperbound = 0.88;
+        public static double lowerbound = 800;
+        public static double upperbound = 1000;
         public static int MasterId = 32;
         public static int FollowerId = 31;
         public static int EncoderAId = 1;
         public static int EncoderBId = 0;
         public static final class armPositons {
-            public static final double REST = 0;
-            public static final double LOW = 10;
-            public static final double MID = 40;
-            public static final double HIGH = 120;
-            public static final double LOADING = 0;
+            public static final double REST = 0.55 * 8192;
+            public static final double LOW = .083 * 8192;
+            public static final double MID = .111 * 8192;
+            public static final double HIGH = .333 * 8192;
+            public static final double LOADING = .111 * 8192;
         }
     }
     public static final class UpperArm{
-        public static double lowerbound = -0.218;
-        public static double upperbound = -0.176;
+        public static double lowerbound = 1000;
+        public static double upperbound = 2000;
         public static int MasterId = 30;
         public static int FollowerId = 33;
         public static int EncoderAId = 3;
         public static int EncoderBId = 2;
         public static final class armPositons {
-            public static final double REST = 0;
-            public static final double LOW = 10;
-            public static final double MID = 40;
-            public static final double HIGH = 120;
-            public static final double LOADING = 0;
+            public static final double REST = 0.55 * 8192;
+            public static final double LOW = .50 * 8192;
+            public static final double MID = .55 * 8192;
+            public static final double HIGH = .55 * 8192;
+            public static final double LOADING = .55 * 8192;
         }
     }
     public static int ph = 30;

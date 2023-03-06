@@ -21,16 +21,13 @@ public class TeleopCommand extends CommandBase {
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
-    private BooleanSupplier loading;
-    private BooleanSupplier low;
-    private BooleanSupplier mid;
-    private BooleanSupplier high;
     private BooleanSupplier leftTrigger;
     private BooleanSupplier rightTrigger;
+    private BooleanSupplier lockPose;
+    private boolean set_wheelLock;
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
-            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
-            BooleanSupplier loading, BooleanSupplier low, BooleanSupplier mid, BooleanSupplier high,
+            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup,BooleanSupplier lockPose, RobotArm arm,
             BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, AutoBalancer s_Balancer) {
         this.s_Swerve = s_Swerve;
         this.s_Arm = arm;
@@ -41,12 +38,9 @@ public class TeleopCommand extends CommandBase {
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
-        this.loading = loading;
-        this.low = low;
-        this.mid = mid;
-        this.high = high;
         this.leftTrigger = leftTrigger;
         this.rightTrigger = rightTrigger;
+        this.lockPose = lockPose;
     }
 
     @Override
@@ -64,16 +58,25 @@ public class TeleopCommand extends CommandBase {
         }
         /* Drive */
         if (balancing_mode) {
-            this.s_Balancer.periodic(s_Swerve.gyro);
-            translationVal = this.s_Balancer.translationVal;
-            strafeVal = this.s_Balancer.strafeVal;
-            Translation2d heading = new Translation2d(translationVal, strafeVal);
-            s_Swerve.drive(
-                    heading.times(Constants.Swerve.maxSpeed),
-                    swerve_rotation,
-                    !robotCentricSup.getAsBoolean(),
-                    true);
-        } else {
+            boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro);
+            if (lockWheels)
+            {
+                s_Swerve.lockPose();
+            }
+            else{
+                translationVal = this.s_Balancer.translationVal;
+                strafeVal = this.s_Balancer.strafeVal;
+                Translation2d heading = new Translation2d(translationVal, strafeVal);
+                s_Swerve.drive(
+                        heading.times(Constants.Swerve.maxSpeed),
+                        swerve_rotation,
+                        !robotCentricSup.getAsBoolean(),
+                        true);
+            }
+
+        } else if (this.lockPose.getAsBoolean()){
+            s_Swerve.lockPose();
+        }else {
             s_Swerve.drive(
                     new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
                     swerve_rotation,
