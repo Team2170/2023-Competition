@@ -1,19 +1,19 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-import frc.robot.autos.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.autos.exampleAuto;
+import frc.robot.commands.TeleopCommand;
+import frc.robot.subsystems.AutoBalancer;
+import frc.robot.subsystems.RobotArm;
+import frc.robot.subsystems.Swerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -107,7 +107,28 @@ public class RobotContainer {
         var release_button = leftTrigger.getAsBoolean();
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
         s_arm.DisplayEncoder();
-
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
+    }
+    public void autoPeriodic()
+    {
+        double translationVal = 0.00;
+        double strafeVal = 0.00;
+        boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro);
+        double rotationVal = MathUtil.applyDeadband(driver.getRawAxis(rotationAxis), Constants.stickDeadband);
+        double swerve_rotation = rotationVal * Constants.Swerve.maxAngularVelocity;
+        if (lockWheels)
+        {
+            s_Swerve.lockPose();
+        }
+        else{
+            translationVal = this.s_Balancer.translationVal;
+            strafeVal = this.s_Balancer.strafeVal;
+            Translation2d heading = new Translation2d(translationVal, strafeVal);
+            s_Swerve.drive(
+                    heading.times(Constants.Swerve.maxSpeed),
+                    swerve_rotation,
+                    !robotCentric.getAsBoolean(),
+                    true);
+        }
     }
 }
