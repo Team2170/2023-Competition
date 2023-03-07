@@ -23,8 +23,11 @@ public abstract class ArmMotorGroup {
     public String GroupName;
     public int lowerBound;
     public int upperBound;
+    private PIDController pidController;
+    private double sensorPosition, output, error, iLimit;
+    private double setPoint;
 
-    public ArmMotorGroup(int masterId, int followerId, int encoderIdA, int encoderIdB, String name) {
+    public ArmMotorGroup(int masterId, int followerId, int encoderIdA, int encoderIdB, PIDController pid, String name) {
         encoder = new Encoder(encoderIdA, encoderIdB, true, EncodingType.k4X);
         masterTalonSRX = new TalonSRX(masterId);
         followerTalonSRX = new TalonSRX(followerId);
@@ -35,6 +38,9 @@ public abstract class ArmMotorGroup {
         followerTalonSRX.follow(masterTalonSRX);
         encoder.reset();
         GroupName = name;
+        pidController = pid;
+        pidController.setTolerance(iLimit);
+        setPoint = encoder.get();
     }
 
     public void DisplayEncoder() {
@@ -94,4 +100,24 @@ public abstract class ArmMotorGroup {
     }
 
     public abstract void operate_arm(double manualDirection);
+
+    public double operate()
+    {
+        // Get Encoder Position
+        sensorPosition = encoder.get();
+        //Get Error.
+        error = setPoint - sensorPosition;  // difference between setpoint/reference and current point
+        output = MathUtil.clamp(pidController.calculate(error), lowerBound, upperBound);
+        return output;
+    }
+
+    public void setPoint(double point)
+    {
+        setPoint = point;
+    }
+
+    public int getEncoderVal()
+    {
+        return this.encoder.get();
+    }
 }

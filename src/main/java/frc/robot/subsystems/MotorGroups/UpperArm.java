@@ -2,11 +2,14 @@ package frc.robot.subsystems.MotorGroups;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class UpperArm extends ArmMotorGroup {
-    public UpperArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name) {
-        super(masterId, followerId, encoderIdA, encoderIdB, name);
+    public UpperArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name, double kP, double kI,
+            double kD) {
+        super(masterId, followerId, encoderIdA, encoderIdB, new PIDController(kP, kI, kD), name);
     }
 
     public void initialize_bounds(int Upper, int Lower) {
@@ -29,7 +32,8 @@ public class UpperArm extends ArmMotorGroup {
      * @return void
      */
     public void lower_arm_manually() {
-        driveMotors(-0.3);
+        double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
+        driveMotors(-0.01 * scaler);
     };
 
     /**
@@ -38,7 +42,8 @@ public class UpperArm extends ArmMotorGroup {
      * @return void
      */
     public void raise_arm_manually() {
-        driveMotors(0.3);
+        double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
+        driveMotors(0.05 * scaler);
     };
 
     public void DisplayEncoder() {
@@ -55,15 +60,19 @@ public class UpperArm extends ArmMotorGroup {
         super.GetFollower().set(ControlMode.PercentOutput, speed);
     }
 
-    public void operate_arm(double manualDirection){
-        if(manualDirection > 0.2)
-        {
+    public void operate_arm(double manualDirection) {
+        if (manualDirection > 0) {
+            super.setPoint(super.getEncoderVal());
             raise_arm_manually();
-        }else if(manualDirection < -0.2)
-        {
+        } else if (manualDirection < 0) {
+            super.setPoint(super.getEncoderVal());
             lower_arm_manually();
-        }else{
-            stop_arm();
+        } else {
+            hold_arm();
         }
+    }
+
+    public void hold_arm() {
+        super.operate();
     }
 }

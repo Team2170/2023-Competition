@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -100,8 +101,8 @@ public class RobotContainer {
 
     public void periodic()
     {
-        var upper_part_manual_direction = this.operator.getRawAxis(ArmUpperDirection);
-        var lower_part_manual_direction = this.operator.getRawAxis(ArmLowerDirection);
+        double upper_part_manual_direction = MathUtil.applyDeadband(this.operator.getRawAxis(ArmUpperDirection), Constants.stickDeadband);
+        double lower_part_manual_direction = MathUtil.applyDeadband(this.operator.getRawAxis(ArmLowerDirection), Constants.stickDeadband);
         var grab_button = rightTrigger.getAsBoolean();
         var release_button = leftTrigger.getAsBoolean();
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
