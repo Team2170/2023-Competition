@@ -15,7 +15,8 @@ public class LowerArm extends ArmMotorGroup {
      * @param name
      */
     public LowerArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name , double kP , double kI , double kD) {
-        super(masterId, followerId, encoderIdA, encoderIdB, new PIDController(kP, kI, kD) , name);    
+        super(masterId, followerId, encoderIdA, encoderIdB, new PIDController(kP, kI, kD) , name); 
+        initialize_bounds(-414, 265);   
     }
 
     public void initialize_bounds(int Upper, int Lower) {
@@ -39,7 +40,7 @@ public class LowerArm extends ArmMotorGroup {
      */
     public void lower_arm_manually() {
         double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
-        driveMotors(-0.01 * scaler);
+        driveMotors(-0.3);
     };
 
     /**
@@ -49,7 +50,7 @@ public class LowerArm extends ArmMotorGroup {
      */
     public void raise_arm_manually() {
         double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
-        driveMotors(0.05 * scaler);
+        driveMotors(0.2);
     };
 
     public void DisplayEncoder() {
@@ -84,6 +85,7 @@ public class LowerArm extends ArmMotorGroup {
 
     public void hold_arm()
     {
-        super.operate();
+        stop_arm();
+        //super.operate();
     }
 }

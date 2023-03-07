@@ -104,7 +104,7 @@ public abstract class ArmMotorGroup {
     public double operate()
     {
         // Get Encoder Position
-        sensorPosition = encoder.get();
+        sensorPosition = getEncoderVal();
         //Get Error.
         error = setPoint - sensorPosition;  // difference between setpoint/reference and current point
         output = MathUtil.clamp(pidController.calculate(error), lowerBound, upperBound);
@@ -118,6 +118,6 @@ public abstract class ArmMotorGroup {
 
     public int getEncoderVal()
     {
-        return this.encoder.get();
+        return this.encoder.getRaw();
     }
 }

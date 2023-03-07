@@ -33,7 +33,7 @@ public class UpperArm extends ArmMotorGroup {
      */
     public void lower_arm_manually() {
         double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
-        driveMotors(-0.01 * scaler);
+        driveMotors(-0.1);
     };
 
     /**
@@ -43,7 +43,7 @@ public class UpperArm extends ArmMotorGroup {
      */
     public void raise_arm_manually() {
         double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
-        driveMotors(0.05 * scaler);
+        driveMotors(0.7);
     };
 
     public void DisplayEncoder() {
@@ -73,6 +73,7 @@ public class UpperArm extends ArmMotorGroup {
     }
 
     public void hold_arm() {
-        super.operate();
+        stop_arm();
+        //super.operate();
     }
 }
