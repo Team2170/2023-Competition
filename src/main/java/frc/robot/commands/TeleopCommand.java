@@ -23,11 +23,10 @@ public class TeleopCommand extends CommandBase {
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier leftTrigger;
     private BooleanSupplier rightTrigger;
-    private BooleanSupplier lockPose;
     private boolean set_wheelLock;
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
-            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup,BooleanSupplier lockPose, RobotArm arm,
+            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
             BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, AutoBalancer s_Balancer) {
         this.s_Swerve = s_Swerve;
         this.s_Arm = arm;
@@ -40,7 +39,6 @@ public class TeleopCommand extends CommandBase {
         this.robotCentricSup = robotCentricSup;
         this.leftTrigger = leftTrigger;
         this.rightTrigger = rightTrigger;
-        this.lockPose = lockPose;
     }
 
     @Override
@@ -56,6 +54,11 @@ public class TeleopCommand extends CommandBase {
                 balancing_mode = true;
             }
         }
+        SmartDashboard.putBoolean("Mod 0 Locked", false);
+        SmartDashboard.putBoolean("Mod 1 Locked", false);
+        SmartDashboard.putBoolean("Mod 2 Locked", false);
+        SmartDashboard.putBoolean("Mod 3 Locked", false);
+
         /* Drive */
         if (balancing_mode) {
             boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro);
@@ -73,16 +76,16 @@ public class TeleopCommand extends CommandBase {
                         !robotCentricSup.getAsBoolean(),
                         true);
             }
-
-        } else if (this.lockPose.getAsBoolean()){
+        } else if (s_Swerve.lock_wheels)
+        {
             s_Swerve.lockPose();
-        }else {
+        }
+        else {
             s_Swerve.drive(
                     new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
                     swerve_rotation,
                     !robotCentricSup.getAsBoolean(),
                     true);
         }
-
     }
 }

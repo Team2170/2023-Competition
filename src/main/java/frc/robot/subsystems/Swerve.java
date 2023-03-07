@@ -23,9 +23,11 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     /**
      * Simulation of the swerve drive.
      */
-
+    public boolean lock_wheels;
 
     public Swerve() {
+        lock_wheels = false;
+        
         gyro = new NavXSwerve();
         gyro.factoryDefault();
 
@@ -128,6 +130,11 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         SwerveModuleState mod3Lock = new SwerveModuleState(0, Rotation2d.fromDegrees(315));
         SwerveModuleState[] states = new SwerveModuleState[] { mod0Lock, mod1Lock, mod2Lock, mod3Lock };
         setModuleStates(states);
+        
+        SmartDashboard.putBoolean("Mod 0 Locked", true);
+        SmartDashboard.putBoolean("Mod 1 Locked", true);
+        SmartDashboard.putBoolean("Mod 2 Locked", true);
+        SmartDashboard.putBoolean("Mod 3 Locked", true);
     }
 
     @Override
