@@ -51,7 +51,7 @@ public class TeleopCommand extends CommandBase {
         boolean balancing_mode = false;
         if (this.leftTrigger.getAsBoolean()) {
             if (this.rightTrigger.getAsBoolean()) {
-                balancing_mode = true;
+                //balancing_mode = true;
             }
         }
         SmartDashboard.putBoolean("Mod 0 Locked", false);

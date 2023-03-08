@@ -29,6 +29,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         lock_wheels = false;
         
         gyro = new NavXSwerve();
+        //gyro = new ADXR350Swerve();
         gyro.factoryDefault();
 
         zeroGyro();
