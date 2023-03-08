@@ -50,11 +50,12 @@ public class AutoBalancer extends SubsystemBase {
         return false;
     }
 
-    public void balance(NavXSwerve robotGyro) {
+    public void balance(double robotPitch) {
         // proportional term calculation
         setPointAngle = 0;
 
-        error = setPointAngle - robotGyro.getPitch();
+
+        error = setPointAngle - robotPitch;
 
         output = MathUtil.clamp(balanceController.calculate(error), -maxOutput, maxOutput);
 
@@ -62,11 +63,11 @@ public class AutoBalancer extends SubsystemBase {
         
     }
 
-    public boolean periodic(NavXSwerve robotGyro) {
+    public boolean periodic(double pitch) {
         boolean lock = false;
         // This method will be called once per scheduler run
         if (Math.abs(sensorAngle) - setPointAngle > 2.5) {
-            balance(robotGyro);
+            balance(pitch);
             if (sensorAngle < setPointAngle) {
                 System.out.println("Driving forward");
                 translationVal = 0.05;

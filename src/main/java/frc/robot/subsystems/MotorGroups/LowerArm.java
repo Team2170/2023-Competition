@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 
 public class LowerArm extends ArmMotorGroup {
     /**
@@ -15,14 +16,8 @@ public class LowerArm extends ArmMotorGroup {
      * @param name
      */
     public LowerArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name , double kP , double kI , double kD) {
-        super(masterId, followerId, encoderIdA, encoderIdB, new PIDController(kP, kI, kD) , name); 
-        initialize_bounds(-414, 265);   
+        super(masterId, followerId, encoderIdA, encoderIdB, new PIDController(kP, kI, kD) , name);  
     }
-
-    public void initialize_bounds(int Upper, int Lower) {
-        super.SetUpperBound(Upper);
-        super.SetLowerBound(Lower);
-    };
 
     /**
      * Stops the movement of the robot arm.
@@ -39,8 +34,7 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void lower_arm_manually() {
-        double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
-        driveMotors(-0.3);
+        driveMotors(Constants.LowerArm.downwardspeed);
     };
 
     /**
@@ -49,8 +43,7 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void raise_arm_manually() {
-        double scaler = MathUtil.clamp(super.getEncoderVal(), lowerBound, upperBound);
-        driveMotors(0.2);
+        driveMotors(Constants.LowerArm.upwardspeed);
     };
 
     public void DisplayEncoder() {
@@ -69,23 +62,13 @@ public class LowerArm extends ArmMotorGroup {
         super.GetFollower().set(ControlMode.PercentOutput, -speed);
     }
 
-    public void operate_arm(double manualDirection){
-        if(manualDirection > 0)
-        {   
-            super.setPoint(super.getEncoderVal());
+    public void operate_arm(double manualDirection) {
+        if (manualDirection > 0.2) {
             raise_arm_manually();
-        }else if(manualDirection < 0)
-        {
-            super.setPoint(super.getEncoderVal());
+        } else if (manualDirection < -0.2) {
             lower_arm_manually();
-        }else{
-            hold_arm();            
+        } else {
+            stop_arm();
         }
-    }
-
-    public void hold_arm()
-    {
-        stop_arm();
-        //super.operate();
     }
 }

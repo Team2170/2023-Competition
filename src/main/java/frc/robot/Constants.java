@@ -153,38 +153,20 @@ public final class Constants {
     }
 
     public static final class LowerArm{
-        public static double lowerbound = 250;
-        public static double upperbound = -830;
         public static int MasterId = 32;
         public static int FollowerId = 31;
         public static int EncoderAId = 1;
         public static int EncoderBId = 0;
-        public static double upwardspeed = 0.2;
-        public static double downwardspeed = 0.04;
-        public static final class armPositons {
-            public static final double REST = 0.55 * 8192;
-            public static final double LOW = .083 * 8192;
-            public static final double MID = .111 * 8192;
-            public static final double HIGH = .333 * 8192;
-            public static final double LOADING = .111 * 8192;
-        }
+        public static double upwardspeed = 0.35;
+        public static double downwardspeed = -0.05;
     }
     public static final class UpperArm{
-        public static double lowerbound = -67;
-        public static double upperbound = -1756;
         public static int MasterId = 30;
         public static int FollowerId = 33;
         public static int EncoderAId = 3;
         public static int EncoderBId = 2;
-        public static double upwardspeed = 0.2;
-        public static double downwardspeed = 0.04;
-        public static final class armPositons {
-            public static final double REST = 0.55 * 8192;
-            public static final double LOW = .50 * 8192;
-            public static final double MID = .55 * 8192;
-            public static final double HIGH = .55 * 8192;
-            public static final double LOADING = .55 * 8192;
-        }
+        public static double upwardspeed = 0.75;
+        public static double downwardspeed = -0.04;
     }
     public static int ph = 30;
 }

@@ -50,8 +50,6 @@ public abstract class ArmMotorGroup {
         SmartDashboard.putNumber(GroupName + "Distance", distance);
     }
 
-    public abstract void initialize_bounds(int Upper, int Lower);
-
     /**
      * Stops the movement of the robot arm.
      *
@@ -118,6 +116,6 @@ public abstract class ArmMotorGroup {
 
     public int getEncoderVal()
     {
-        return this.encoder.getRaw();
+        return this.encoder.get();
     }
 }

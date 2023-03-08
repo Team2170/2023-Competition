@@ -113,7 +113,7 @@ public class RobotContainer {
     {
         double translationVal = 0.00;
         double strafeVal = 0.00;
-        boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro);
+        boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro.getPitch());
         double rotationVal = MathUtil.applyDeadband(driver.getRawAxis(rotationAxis), Constants.stickDeadband);
         double swerve_rotation = rotationVal * Constants.Swerve.maxAngularVelocity;
         if (lockWheels)

@@ -51,7 +51,7 @@ public class TeleopCommand extends CommandBase {
         boolean balancing_mode = false;
         if (this.leftTrigger.getAsBoolean()) {
             if (this.rightTrigger.getAsBoolean()) {
-                //balancing_mode = true;
+                balancing_mode = true;
             }
         }
         SmartDashboard.putBoolean("Mod 0 Locked", false);
@@ -61,7 +61,7 @@ public class TeleopCommand extends CommandBase {
 
         /* Drive */
         if (balancing_mode) {
-            boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro);
+            boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro.getPitch());
             if (lockWheels)
             {
                 s_Swerve.lockPose();
