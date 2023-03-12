@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.s_arm.periodic(0, 0,false,false);
     new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
     m_robotContainer.setStartTime(Timer.getFPGATimestamp());
-    Timer.delay(4);
+    Timer.delay(6);
 
   }
 
