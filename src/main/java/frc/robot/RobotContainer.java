@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.math.Conversions;
+import frc.robot.autos.auto;
 import frc.robot.autos.exampleAuto;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.AutoBalancer;
@@ -119,24 +120,9 @@ public class RobotContainer {
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
     }
-    public double distance_traveld()
-    {
-        var traveled_in_inches = s_Swerve.mSwerveMods[0].getCanCoder().getRotations() * 2  * Math.PI * 2;
-        traveled = Units.inchesToMeters(traveled_in_inches);
-        SmartDashboard.putNumber("Auto Traveled Forward", traveled);
-        return traveled;
-    }
     public void autoPeriodic()
     {
-        var currentTime = Timer.getFPGATimestamp();
-        var timeDifference = currentTime - StartTime;
-        SmartDashboard.putNumber("Auto Time", timeDifference);
-        if(timeDifference < 3){}
-        s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
-
-    }
-    public void setStartTime( double startTime)
-    {
-        StartTime = startTime;
+        auto auto_manger = new auto();
+        auto_manger.stage_one(s_Swerve);
     }
 }
