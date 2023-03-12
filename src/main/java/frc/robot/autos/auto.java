@@ -8,11 +8,6 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.Swerve;
 
 public class auto {
-    public  CommandBase ForwardAndSpin_180(Swerve swerve)
-    {
-      return Commands.sequence(
-          new RepeatCommand(new InstantCommand(() -> swerve.drive(new Translation2d(1, 0), 0, true, true), swerve))).andThen(new InstantCommand(() -> swerve.drive(new Translation2d(1, 0), 180, true, true), swerve));
-    }
     /*
      * Drive Forward...
      */

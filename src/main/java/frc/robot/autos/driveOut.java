@@ -9,11 +9,12 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class exampleAuto extends CommandBase {
+public class driveOut extends CommandBase {
     private Swerve s_Swerve;
     private RobotArm s_Arm;
     private AutoBalancer s_Balancer;
@@ -25,18 +26,38 @@ public class exampleAuto extends CommandBase {
     private BooleanSupplier rightTrigger;
     private boolean set_wheelLock;
 
-    public exampleAuto(Swerve s_Swerve, RobotArm arm,AutoBalancer s_Balancer) {
+    public driveOut(Swerve s_Swerve, RobotArm arm,AutoBalancer s_Balancer) {
         this.s_Swerve = s_Swerve;
         this.s_Arm = arm;
         this.s_Balancer = s_Balancer;
         addRequirements(s_Swerve);
     }
 
-    public void execute(double xVector, double yVector) {
-        /* Get Values, Deadband */
-        double translationVal = MathUtil.applyDeadband(xVector, Constants.stickDeadband);
-        double strafeVal = MathUtil.applyDeadband(yVector, Constants.stickDeadband);
-        double rotationVal = MathUtil.applyDeadband(0, Constants.stickDeadband);
-        double swerve_rotation = rotationVal * Constants.Swerve.maxAngularVelocity;
+    public void initialize() {
+        s_Arm.periodic(0, -0.5,false,false);
+        Timer.delay(0.25);   
+        s_Arm.periodic(0, 0,false,false);
+
+    }
+
+    protected void execute(double xVector, double yVector) {
+        s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
+    }
+
+    public boolean isFinished() {
+        var distance_traveled_x = s_Swerve.swerveOdometry.getPoseMeters().getX();
+        if( distance_traveled_x >=  1)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    protected void end() {
+        s_Arm.periodic(0, 0,false,false);
+    }
+
+    protected void interrupted() {
+        end();
     }
 }

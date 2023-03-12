@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.autos.exampleAuto;
+import frc.robot.autos.autoGroup;
+import frc.robot.autos.driveOut;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
@@ -80,6 +82,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.s_arm.periodic(0, 0,false,false);
     new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
     Timer.delay(6);
+    Commands.run(() -> new autoGroup(m_robotContainer.s_Swerve, m_robotContainer.s_arm,m_robotContainer.s_Balancer));
 
   }
 

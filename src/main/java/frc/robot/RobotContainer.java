@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.math.Conversions;
 import frc.robot.autos.auto;
-import frc.robot.autos.exampleAuto;
+import frc.robot.autos.driveOut;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.AutoBalancer;
 import frc.robot.subsystems.RobotArm;
@@ -59,9 +59,9 @@ public class RobotContainer {
     private double armdown_counter = 0;
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
+    public final Swerve s_Swerve = new Swerve();
     public final RobotArm s_arm = new RobotArm();
-    private final AutoBalancer s_Balancer = new AutoBalancer();
+    public final AutoBalancer s_Balancer = new AutoBalancer();
     public double StartTime;
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -107,7 +107,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new exampleAuto(s_Swerve, s_arm, s_Balancer);
+        return new driveOut(s_Swerve, s_arm, s_Balancer);
     }
 
     public void periodic()
