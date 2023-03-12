@@ -15,6 +15,8 @@ public class autoGroup extends SequentialCommandGroup {
      */
     public autoGroup(Swerve s_Swerve,RobotArm s_Arm,AutoBalancer s_balancer ) {
       addCommands(
+        // Lower Arm First in Cmd group
+          new lowerArmCmd(s_Swerve, s_Arm, s_balancer),
           // Drive forward the specified distance
           new driveOut(s_Swerve, s_Arm, s_balancer),
   

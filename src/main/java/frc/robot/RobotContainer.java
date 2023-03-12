@@ -122,7 +122,6 @@ public class RobotContainer {
     }
     public void autoPeriodic()
     {
-        auto auto_manger = new auto();
-        auto_manger.stage_one(s_Swerve);
+        s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
     }
 }

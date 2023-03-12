@@ -13,7 +13,7 @@ public class auto {
      */
     public void stage_one(Swerve s_Swerve)
     {
-        s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
+        s_Swerve.drive(new Translation2d(-1, 0), 0, false, false);
     }
     /*
      * Drive Backwards...
