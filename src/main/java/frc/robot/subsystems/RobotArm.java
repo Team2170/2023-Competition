@@ -9,7 +9,7 @@ import frc.robot.subsystems.MotorGroups.UpperArm;
 public class RobotArm extends SubsystemBase {
     public UpperArm upper_arm;
     public LowerArm lower_arm;
-    public PnuematicsGroup grabber;
+    public PnuematicsGroup grabber; 
 
     public RobotArm() {
         lower_arm = new LowerArm(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderAId,Constants.LowerArm.EncoderBId,"Lower",0.1,0.1,0.1);

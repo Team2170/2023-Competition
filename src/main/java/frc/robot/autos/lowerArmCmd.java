@@ -43,7 +43,7 @@ public class lowerArmCmd extends CommandBase {
         Timer.delay(0.25);
         s_Arm.periodic(0, 0,false,false);
         isCmdFinished = true;
-    }
+    } 
 
     public boolean isFinished() {
         return isCmdFinished;

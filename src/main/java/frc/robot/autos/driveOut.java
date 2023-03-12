@@ -41,7 +41,7 @@ public class driveOut extends CommandBase {
         SmartDashboard.putString("Executing", "Auto Drive Forward.");
         s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
     }
-
+ 
     public boolean isFinished() {
         var distance_traveled_x = s_Swerve.swerveOdometry.getPoseMeters().getX();
         SmartDashboard.putNumber("Auto Distance Forward", distance_traveled_x);

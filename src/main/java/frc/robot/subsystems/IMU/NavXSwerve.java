@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Communicates with the NavX as the IMU.
  */
-public class NavXSwerve extends SwerveIMU
+public class NavXSwerve extends SwerveIMU 
 {
 
   /**

@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Creates a IMU for {@link edu.wpi.first.wpilibj.AnalogGyro} devices, only uses yaw.
  */
-public class AnalogGyroSwerve extends SwerveIMU
+public class AnalogGyroSwerve extends SwerveIMU 
 {
 
   /**

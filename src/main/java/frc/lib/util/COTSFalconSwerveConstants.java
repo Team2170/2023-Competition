@@ -8,7 +8,7 @@ public class COTSFalconSwerveConstants {
     public final double wheelCircumference;
     public final double angleGearRatio;
     public final double driveGearRatio;
-    public final double angleKP;
+    public final double angleKP; 
     public final double angleKI;
     public final double angleKD;
     public final double angleKF;

@@ -22,7 +22,7 @@ public class auto {
     {
         s_Swerve.drive(new Translation2d(1, 0), 0, true, false);
     }
-    /*
+    /* 
      * AutoBalance Stage...
      */
     public void stage_three(Swerve s_Swerve)

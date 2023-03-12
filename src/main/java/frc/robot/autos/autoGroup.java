@@ -12,7 +12,7 @@ public class autoGroup extends SequentialCommandGroup {
      * @param s_Swerve The Swerve subsystem this command will run on
      * @param s_Arm The RobotArm subsystem this command will run on
      * @param s_balancer The AutoBalancer subsystem this command will run on
-     */
+     */ 
     public autoGroup(Swerve s_Swerve,RobotArm s_Arm,AutoBalancer s_balancer ) {
       addCommands(
         // Lower Arm First in Cmd group

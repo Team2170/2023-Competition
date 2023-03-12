@@ -9,7 +9,7 @@ import java.util.Optional;
  */
 public abstract class SwerveIMU
 {
-
+ 
   /**
    * Reset IMU to factory default.
    */
