@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
-import frc.robot.subsystems.IMU.ADXRS450Swerve;
+import frc.robot.subsystems.IMU.ADIS16448Swerve;
 import frc.robot.subsystems.IMU.NavXSwerve;
 import frc.robot.subsystems.IMU.SwerveIMU;
 
@@ -21,7 +21,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     // public Pigeon2 gyro;
-    public ADXRS450Swerve gyro;
+    public ADIS16448Swerve gyro;
     /**
      * Simulation of the swerve drive.
      */
@@ -32,7 +32,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
      */
     public Swerve() {
         lock_wheels = false;
-        gyro = new ADXRS450Swerve();
+        gyro = new ADIS16448Swerve();
         //gyro = new NavXSwerve();
         gyro.factoryDefault();
 
@@ -112,7 +112,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        gyro.getYawPitchRoll(null);
+        gyro.getYawPitchRoll(new double[3]);
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
                 : Rotation2d.fromDegrees(gyro.getYaw());
     }

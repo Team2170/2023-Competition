@@ -1,5 +1,14 @@
 {
   "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "order": 1,
+        "start": 1
+      },
+      "window": {
+        "visible": true
+      }
+    },
     "Encoders": {
       "0": {
         "header": {
@@ -26,6 +35,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/ADXRS450_Gyro[0]": "Gyro",
       "/SmartDashboard/navX-Sensor[2]": "Gyro"
     }
   },

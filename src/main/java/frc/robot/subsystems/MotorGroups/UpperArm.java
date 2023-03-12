@@ -51,7 +51,7 @@ public class UpperArm extends ArmMotorGroup {
      */
     public void driveMotors(double speed) {
         super.GetMaster().set(ControlMode.PercentOutput, speed);
-        super.GetFollower().set(ControlMode.PercentOutput, speed);
+        super.GetFollower().set(ControlMode.PercentOutput, -speed);
     }
 
     public void operate_arm(double manualDirection) {

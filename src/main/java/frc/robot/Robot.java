@@ -5,8 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
-
+  private AddressableLED m_led;
+  private XboxController controller;
+  private AddressableLEDBuffer m_ledBuffer;
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -28,9 +33,17 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
+    controller = new XboxController(1);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_led = new AddressableLED(8);
+    m_ledBuffer = new AddressableLEDBuffer(10);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    m_led.setLength(m_ledBuffer.getLength());
+
+    // Set the data
+    m_led.setData(m_ledBuffer);
+    m_led.start();
   }
 
   /**
@@ -91,6 +104,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robotContainer.periodic();
+    coneOrCube();
   }
 
   @Override
@@ -102,4 +116,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  private void coneOrCube() {
+    if(controller.getAButtonPressed()) 
+      setColor(110/2, 0, 245/2);
+    else if(controller.getBButtonPressed())
+      setColor(245,245,5);
+  }
+
+  private void setColor(int r, int g, int b){
+    for(int i =0;i<m_ledBuffer.getLength();i++){
+      m_ledBuffer.setRGB(i, r, g, b);
+    }
+  }
 }

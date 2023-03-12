@@ -158,14 +158,14 @@ public final class Constants {
         public static int EncoderAId = 1;
         public static int EncoderBId = 0;
         public static double upwardspeed = 0.35;
-        public static double downwardspeed = -0.05;
+        public static double downwardspeed = -0.35;
     }
     public static final class UpperArm{
         public static int MasterId = 30;
         public static int FollowerId = 33;
         public static int EncoderAId = 3;
         public static int EncoderBId = 2;
-        public static double upwardspeed = 0.75;
+        public static double upwardspeed = 0.35;
         public static double downwardspeed = -0.04;
     }
     public static int ph = 30;

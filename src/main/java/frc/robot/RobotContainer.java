@@ -48,6 +48,8 @@ public class RobotContainer {
     private final JoystickButton leftTrigger = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
     private final JoystickButton rightTrigger = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
    
+
+  
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final RobotArm s_arm = new RobotArm();
@@ -103,8 +105,8 @@ public class RobotContainer {
     {
         double upper_part_manual_direction = MathUtil.applyDeadband(this.operator.getRawAxis(ArmUpperDirection), Constants.stickDeadband);
         double lower_part_manual_direction = MathUtil.applyDeadband(this.operator.getRawAxis(ArmLowerDirection), Constants.stickDeadband);
-        var grab_button = rightTrigger.getAsBoolean();
-        var release_button = leftTrigger.getAsBoolean();
+        var grab_button = leftTrigger.getAsBoolean();//rightTrigger.getAsBoolean();
+        var release_button = rightTrigger.getAsBoolean();//leftTrigger.getAsBoolean();
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
