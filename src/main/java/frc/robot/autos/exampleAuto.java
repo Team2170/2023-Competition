@@ -1,69 +1,42 @@
 package frc.robot.autos;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.AutoBalancer;
+import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class exampleAuto extends SequentialCommandGroup {
-    public exampleAuto(Swerve s_Swerve){
-        TrajectoryConfig config =
-            new TrajectoryConfig(
-                    Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-                    Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                .setKinematics(Constants.Swerve.swerveKinematics);
+public class exampleAuto extends CommandBase {
+    private Swerve s_Swerve;
+    private RobotArm s_Arm;
+    private AutoBalancer s_Balancer;
+    private DoubleSupplier translationSup;
+    private DoubleSupplier strafeSup;
+    private DoubleSupplier rotationSup;
+    private BooleanSupplier robotCentricSup;
+    private BooleanSupplier leftTrigger;
+    private BooleanSupplier rightTrigger;
+    private boolean set_wheelLock;
 
-        // An example trajectory to follow.  All units in meters.
-        Trajectory exampleTrajectory =
-            TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(-1, 0), new Translation2d(-2, 0)),
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(-3, 0, new Rotation2d(0)),
-                config);
-        Trajectory straightTrajectory =
-                TrajectoryGenerator.generateTrajectory(
-                    // Start at the origin facing the +X direction
-                    new Pose2d(0, 0, new Rotation2d(0)),
-                    // Pass through these two interior waypoints, making an 's' curve path
-                    List.of(new Translation2d(-1, 0),new Translation2d(-2, 0),new Translation2d(-3, 0)),
-                    // End 4 meters straight ahead of where we started, facing forward
-                    new Pose2d(-4, 0, new Rotation2d(0)),
-                    config);
-        var thetaController =
-            new ProfiledPIDController(
-                Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    public exampleAuto(Swerve s_Swerve, RobotArm arm,AutoBalancer s_Balancer) {
+        this.s_Swerve = s_Swerve;
+        this.s_Arm = arm;
+        this.s_Balancer = s_Balancer;
+        addRequirements(s_Swerve);
+    }
 
-        SwerveControllerCommand swerveControllerCommand =
-            new SwerveControllerCommand(
-                exampleTrajectory,
-                s_Swerve::getPose,
-                Constants.Swerve.swerveKinematics,
-                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-                thetaController,
-                s_Swerve::setModuleStates,
-                s_Swerve);
-
-
-        addCommands(
-            new InstantCommand(() -> s_Swerve.resetOdometry(exampleTrajectory.getInitialPose())),
-            swerveControllerCommand
-        );
+    public void execute(double xVector, double yVector) {
+        /* Get Values, Deadband */
+        double translationVal = MathUtil.applyDeadband(xVector, Constants.stickDeadband);
+        double strafeVal = MathUtil.applyDeadband(yVector, Constants.stickDeadband);
+        double rotationVal = MathUtil.applyDeadband(0, Constants.stickDeadband);
+        double swerve_rotation = rotationVal * Constants.Swerve.maxAngularVelocity;
     }
 }

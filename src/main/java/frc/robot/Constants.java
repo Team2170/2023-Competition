@@ -166,7 +166,7 @@ public final class Constants {
         public static int EncoderAId = 3;
         public static int EncoderBId = 2;
         public static double upwardspeed = 0.35;
-        public static double downwardspeed = -0.04;
+        public static double downwardspeed = -0.4;
     }
     public static int ph = 30;
 }

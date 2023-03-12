@@ -5,9 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.autos.exampleAuto;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
@@ -72,21 +75,20 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.s_arm.periodic(0, -0.5,false,false);
+    Timer.delay(0.25);   
+    m_robotContainer.s_arm.periodic(0, 0,false,false);
+    new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
+    m_robotContainer.setStartTime(Timer.getFPGATimestamp());
+    Timer.delay(4);
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    if(m_autonomousCommand.isFinished())
-    {
-      m_robotContainer.autoPeriodic();
-    }
+    m_robotContainer.autoPeriodic();
+    
   }
 
   @Override

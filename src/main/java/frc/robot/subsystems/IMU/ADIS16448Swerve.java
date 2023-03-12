@@ -71,6 +71,8 @@ public class ADIS16448Swerve extends SwerveIMU
     yprArray[0] = (imu.getAngle() % 360) - yawOffset;
     yprArray[1] = imu.getXComplementaryAngle() % 360;
     yprArray[2] = imu.getYComplementaryAngle() % 360;
+    
+    SmartDashboard.putNumber("Gyro - Yaw",yprArray[0]);
   }
 
   public double getYaw()

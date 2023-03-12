@@ -112,7 +112,8 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        gyro.getYawPitchRoll(new double[3]);
+        double[] yprArray = new double[3];
+        gyro.getYawPitchRoll(yprArray);
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
                 : Rotation2d.fromDegrees(gyro.getYaw());
     }

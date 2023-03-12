@@ -1,14 +1,20 @@
 package frc.robot;
 
+import org.opencv.utils.Converters;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.lib.math.Conversions;
 import frc.robot.autos.exampleAuto;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.AutoBalancer;
@@ -48,17 +54,19 @@ public class RobotContainer {
     private final JoystickButton leftTrigger = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
     private final JoystickButton rightTrigger = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
    
+    private double traveled = 0.00;
+    private double armdown_counter = 0;
 
-  
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final RobotArm s_arm = new RobotArm();
+    public final RobotArm s_arm = new RobotArm();
     private final AutoBalancer s_Balancer = new AutoBalancer();
-
+    public double StartTime;
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
                         s_Swerve,
@@ -98,7 +106,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new exampleAuto(s_Swerve);
+        return new exampleAuto(s_Swerve, s_arm, s_Balancer);
     }
 
     public void periodic()
@@ -111,26 +119,24 @@ public class RobotContainer {
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
     }
+    public double distance_traveld()
+    {
+        var traveled_in_inches = s_Swerve.mSwerveMods[0].getCanCoder().getRotations() * 2  * Math.PI * 2;
+        traveled = Units.inchesToMeters(traveled_in_inches);
+        SmartDashboard.putNumber("Auto Traveled Forward", traveled);
+        return traveled;
+    }
     public void autoPeriodic()
     {
-        double translationVal = 0.00;
-        double strafeVal = 0.00;
-        boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro.getPitch());
-        double rotationVal = MathUtil.applyDeadband(driver.getRawAxis(rotationAxis), Constants.stickDeadband);
-        double swerve_rotation = rotationVal * Constants.Swerve.maxAngularVelocity;
-        if (lockWheels)
-        {
-            s_Swerve.lockPose();
-        }
-        else{
-            translationVal = this.s_Balancer.translationVal;
-            strafeVal = this.s_Balancer.strafeVal;
-            Translation2d heading = new Translation2d(translationVal, strafeVal);
-            s_Swerve.drive(
-                    heading.times(Constants.Swerve.maxSpeed),
-                    swerve_rotation,
-                    !robotCentric.getAsBoolean(),
-                    true);
-        }
+        var currentTime = Timer.getFPGATimestamp();
+        var timeDifference = currentTime - StartTime;
+        SmartDashboard.putNumber("Auto Time", timeDifference);
+        if(timeDifference < 3){}
+        s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
+
+    }
+    public void setStartTime( double startTime)
+    {
+        StartTime = startTime;
     }
 }
