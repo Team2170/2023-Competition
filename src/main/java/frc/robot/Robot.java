@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
     Timer.delay(0.25);   
     m_robotContainer.s_arm.periodic(0, 0,false,false);
     new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
-    Timer.delay(12);
+    Timer.delay(10);
 
   }
 
