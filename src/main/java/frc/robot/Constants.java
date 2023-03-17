@@ -169,4 +169,9 @@ public final class Constants {
         public static double downwardspeed = -0.4;
     }
     public static int ph = 30;
+
+
+    public static final class Auton{
+        public static final double balanceScale = 3.0, balanceScalePow = 1.0, balanceLimitDeg = 2.0;
+    }
 }

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import frc.robot.Constants.Auton;
 import frc.robot.subsystems.IMU.ADIS16448Swerve;
 import frc.robot.subsystems.IMU.NavXSwerve;
 import frc.robot.subsystems.IMU.SwerveIMU;
@@ -20,6 +21,10 @@ import frc.robot.subsystems.IMU.SwerveIMU;
 public class Swerve<SwerveIMU> extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
+
+    private final SwerveBalance swerveBalance;
+
+
     // public Pigeon2 gyro;
     public ADIS16448Swerve gyro;
     /**
@@ -54,6 +59,8 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+        swerveBalance = new SwerveBalance(Auton.balanceScale, Auton.balanceScalePow);
+    
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -111,12 +118,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         gyro.setYaw(0);        
     }
 
-    public Rotation2d getYaw() {
-        double[] yprArray = new double[3];
-        gyro.getYawPitchRoll(yprArray);
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-                : Rotation2d.fromDegrees(gyro.getYaw());
-    }
+
 
     public void resetModulesToAbsolute() {
         for (SwerveModule mod : mSwerveMods) {
@@ -154,4 +156,67 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
         }
     }
+
+
+    /* HANDLES NEW AUTOBALANCER */
+    
+    
+    /**
+   * Gets the translation of the robot according to the swerve balance updater.
+   *
+   * @return translation of the robot.
+   */
+  public Translation2d getBalanceTranslation() {
+    var gyroRot3d = gyro.getRotation3d();
+    return swerveBalance.calculate(gyroRot3d).unaryMinus();
+  }
+
+    /**
+   * Gets plane inclination with current robot plane and the plane z = 0.
+   *
+   * @return plane inclination in radians.
+   */
+  public Rotation2d getPlaneInclination() {
+    return Rotation2d.fromRadians(
+        Math.atan(Math.hypot(getPitch().getTan(), getRoll().getTan())));
+  }
+
+
+  public Rotation2d getYaw() {
+    double yaw = 0;
+    if ( Constants.Swerve.invertGyro )
+    {
+        yaw = gyro.getRotation3d().unaryMinus().getZ();
+    }
+    else
+    {
+        yaw = gyro.getRotation3d().getZ();
+    }
+    return Rotation2d.fromRadians(yaw);
+}
+public Rotation2d getPitch() {
+    double pitch = 0;
+    if ( Constants.Swerve.invertGyro )
+    {
+        pitch = gyro.getRotation3d().unaryMinus().getY();
+    }
+    else
+    {
+        pitch = gyro.getRotation3d().getY();
+    }
+    return Rotation2d.fromRadians(pitch);
+}
+public Rotation2d getRoll() {
+    double roll = 0;
+    if ( Constants.Swerve.invertGyro )
+    {
+        roll = gyro.getRotation3d().unaryMinus().getX();
+    }
+    else
+    {
+        roll = gyro.getRotation3d().getX();
+    }
+    return Rotation2d.fromRadians(roll);
+}
+
 }

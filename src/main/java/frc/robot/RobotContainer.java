@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.math.Conversions;
+import frc.robot.Constants.Auton;
 import frc.robot.autos.auto;
 import frc.robot.autos.driveOut;
 import frc.robot.commands.TeleopCommand;
@@ -97,7 +99,6 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         lockButton.whileTrue(new RepeatCommand(new InstantCommand(s_Swerve::lockPose, s_Swerve)));
-
     }
 
     /**

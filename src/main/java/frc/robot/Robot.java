@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.Auton;
 import frc.robot.autos.autoGroup;
 import frc.robot.autos.driveOut;
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -81,7 +82,10 @@ public class Robot extends TimedRobot {
     Timer.delay(0.25);   
     m_robotContainer.s_arm.periodic(0, 0,false,false);
     new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
-    Timer.delay(10);
+    Timer.delay(8);
+    Commands.run(
+            () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
+            () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
 
   }
 
