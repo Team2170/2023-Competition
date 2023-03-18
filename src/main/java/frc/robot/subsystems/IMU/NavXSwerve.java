@@ -38,6 +38,10 @@ public class NavXSwerve extends SwerveIMU
       /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
       gyro = new AHRS(port);
       SmartDashboard.putData(gyro);
+      SmartDashboard.putNumber("Gyro Yaw", gyro.getYaw());
+      SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
+      SmartDashboard.putNumber("Gyro Roll", gyro.getRoll());
+
     } catch (RuntimeException ex)
     {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);

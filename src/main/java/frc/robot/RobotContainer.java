@@ -133,7 +133,8 @@ public class RobotContainer {
         {
             Translation2d balance = s_Swerve.getBalanceTranslation();
             System.out.println( "X: " + balance.getX()  +  " Y: " + balance.getY() );
-            s_Swerve.drive(balance, 0, false, false);
+            Translation2d heading = new Translation2d(balance.getX(), 0);
+            s_Swerve.drive(heading, 0, false, false);
 
         }    
     }
