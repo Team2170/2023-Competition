@@ -78,15 +78,14 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_robotContainer.s_arm.periodic(0, -0.5,false,false);
-    Timer.delay(0.25);   
-    m_robotContainer.s_arm.periodic(0, 0,false,false);
-    new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
-    Timer.delay(8);
-    Commands.run(
-            () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
-            () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
-
+    // m_robotContainer.s_arm.periodic(0, -0.5,false,false);
+    // Timer.delay(0.25);   
+    // m_robotContainer.s_arm.periodic(0, 0,false,false);
+    // new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
+    // Timer.delay(8);
+  //   Commands.run(
+  //           () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
+  //           () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
   }
 
   /** This function is called periodically during autonomous. */
@@ -122,7 +121,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robotContainer.autoPeriodic();
+  }
 
   private void coneOrCube() {
     if(controller.getAButtonPressed()) 

@@ -36,7 +36,7 @@ import frc.robot.subsystems.Swerve;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
-    private final Joystick operator = new Joystick(1);
+    private final Joystick operator = new Joystick(0);
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -48,7 +48,9 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton lockButton = new JoystickButton(driver, XboxController.Button.kB.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton slowDown = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+
  /* Operator Buttons */
     private final JoystickButton loadingButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton lowButton = new JoystickButton(operator, XboxController.Button.kX.value);
@@ -80,6 +82,7 @@ public class RobotContainer {
                         s_arm,
                         () -> leftTrigger.getAsBoolean(),
                         () -> rightTrigger.getAsBoolean(),
+                        () -> slowDown.getAsBoolean(),
                          s_Balancer));
 
         // Configure the button bindings
@@ -120,9 +123,18 @@ public class RobotContainer {
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
+
     } 
     public void autoPeriodic()
     {
-        s_Swerve.drive(new Translation2d(-1, 0), 0, true, false);
+        double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
+        System.out.println(planeInclination);
+        if(Math.abs(planeInclination) > Auton.balanceLimitDeg)
+        {
+            Translation2d balance = s_Swerve.getBalanceTranslation();
+            System.out.println( "X: " + balance.getX()  +  " Y: " + balance.getY() );
+            s_Swerve.drive(balance, 0, false, false);
+
+        }    
     }
 }

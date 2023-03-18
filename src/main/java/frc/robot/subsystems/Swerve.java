@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition; 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,7 +27,8 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
 
     // public Pigeon2 gyro;
-    public ADIS16448Swerve gyro;
+    //public ADIS16448Swerve gyro;
+    public NavXSwerve gyro;
     /**
      * Simulation of the swerve drive.
      */
@@ -37,8 +39,8 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
      */
     public Swerve() {
         lock_wheels = false;
-        gyro = new ADIS16448Swerve();
-        //gyro = new NavXSwerve();
+        //gyro = new ADIS16448Swerve();
+        gyro = new NavXSwerve(Port.kUSB);
         gyro.factoryDefault();
 
         zeroGyro();
@@ -62,7 +64,11 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         swerveBalance = new SwerveBalance(Auton.balanceScale, Auton.balanceScalePow);
     
     }
-
+    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, double reductionFactor){
+        Translation2d reducedTranslation = translation.times(reductionFactor);//new Translation2d(translation.getX() * reductionFactor,translation.getY() * reductionFactor); 
+        double reducedRotation = rotation * reductionFactor;
+        drive(reducedTranslation, reducedRotation, fieldRelative, isOpenLoop);
+    }
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -81,6 +87,8 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         }
     }
 
+
+
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
@@ -88,7 +96,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
-    }
+    } 
 
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();

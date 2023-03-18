@@ -23,11 +23,12 @@ public class TeleopCommand extends CommandBase {
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier leftTrigger;
     private BooleanSupplier rightTrigger;
-    private boolean set_wheelLock;
+    private boolean set_wheelLock; 
+    private BooleanSupplier slowButton;
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
             DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
-            BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, AutoBalancer s_Balancer) {
+            BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, BooleanSupplier slowButton, AutoBalancer s_Balancer) {
         this.s_Swerve = s_Swerve;
         this.s_Arm = arm;
         this.s_Balancer = s_Balancer;
@@ -39,6 +40,7 @@ public class TeleopCommand extends CommandBase {
         this.robotCentricSup = robotCentricSup;
         this.leftTrigger = leftTrigger;
         this.rightTrigger = rightTrigger;
+        this.slowButton = slowButton;
     }
 
     @Override
@@ -60,23 +62,7 @@ public class TeleopCommand extends CommandBase {
         SmartDashboard.putBoolean("Mod 3 Locked", false);
 
         /* Drive */
-        if (balancing_mode) {
-            boolean lockWheels = this.s_Balancer.periodic(s_Swerve.gyro.getPitch());
-            if (lockWheels)
-            {
-                s_Swerve.lockPose();
-            }
-            else{
-                translationVal = this.s_Balancer.translationVal;
-                strafeVal = this.s_Balancer.strafeVal;
-                Translation2d heading = new Translation2d(translationVal, strafeVal);
-                s_Swerve.drive(
-                        heading.times(Constants.Swerve.maxSpeed),
-                        swerve_rotation,
-                        !robotCentricSup.getAsBoolean(),
-                        true);
-            }
-        } else if (s_Swerve.lock_wheels)
+        if (s_Swerve.lock_wheels)
         {
             s_Swerve.lockPose();
         }
