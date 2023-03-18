@@ -27,7 +27,7 @@ public class RobotArm extends SubsystemBase {
 
     public void DisplayEncoder()
     {
-        lower_arm.DisplayEncoder();
-        upper_arm.DisplayEncoder();
+        lower_arm.displayEncoder();
+        upper_arm.displayEncoder();
     }
 }

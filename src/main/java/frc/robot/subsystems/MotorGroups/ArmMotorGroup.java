@@ -4,6 +4,10 @@ import javax.swing.GroupLayout.Group;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil; 
 import edu.wpi.first.math.controller.PIDController;
@@ -17,9 +21,9 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Timer;
 
 public abstract class ArmMotorGroup {
-    private TalonSRX masterTalonSRX;
-    private TalonSRX followerTalonSRX;
-    public Encoder encoder;
+    private CANSparkMax masterTalonSRX;
+    private CANSparkMax followerTalonSRX;
+    public RelativeEncoder encoder;
     public String GroupName;
     public int lowerBound;
     public int upperBound;
@@ -27,27 +31,29 @@ public abstract class ArmMotorGroup {
     private double sensorPosition, output, error, iLimit;
     private double setPoint;
 
-    public ArmMotorGroup(int masterId, int followerId, int encoderIdA, int encoderIdB, PIDController pid, String name) {
-        encoder = new Encoder(encoderIdA, encoderIdB, true, EncodingType.k4X);
-        masterTalonSRX = new TalonSRX(masterId);
-        followerTalonSRX = new TalonSRX(followerId);
+    private SparkMaxPIDController m_pidController;
 
-        /* Factory Default all hardware to prevent unexpected behaviour */
-        masterTalonSRX.configFactoryDefault();
-        followerTalonSRX.configFactoryDefault();
+    public ArmMotorGroup(int masterId, int followerId, int encoderIdA, int encoderIdB, PIDController pid, String name) {
+        masterTalonSRX = new CANSparkMax(masterId,MotorType.kBrushed);
+        followerTalonSRX = new CANSparkMax(followerId,MotorType.kBrushed);
         followerTalonSRX.follow(masterTalonSRX);
-        encoder.reset();
+        /* Factory Default all hardware to prevent unexpected behaviour */
+        masterTalonSRX.restoreFactoryDefaults();
+        followerTalonSRX.restoreFactoryDefaults();
+        followerTalonSRX.follow(masterTalonSRX);
+
         GroupName = name;
-        pidController = pid;
-        pidController.setTolerance(iLimit);
-        setPoint = encoder.get();
+        setPoint = encoder.getPosition();
+
+        encoder = masterTalonSRX.getAlternateEncoder(4096);
+        m_pidController = masterTalonSRX.getPIDController();
     }
 
-    public void DisplayEncoder() {
-        double output = encoder.get();
-        double distance = encoder.getDistance();
-        SmartDashboard.putNumber(GroupName + "Output", output);
-        SmartDashboard.putNumber(GroupName + "Distance", distance);
+    public void displayEncoder() {
+        double position = encoder.getPosition();
+        double countsPerRev = encoder.getCountsPerRevolution();
+        SmartDashboard.putNumber(GroupName + "Position", position);
+        SmartDashboard.putNumber(GroupName + "Counts Per Revolution", countsPerRev);
     }
 
     /**
@@ -73,11 +79,11 @@ public abstract class ArmMotorGroup {
 
     public abstract void driveMotors(double speed);
 
-    public TalonSRX GetMaster() {
+    public CANSparkMax GetMaster() {
         return this.masterTalonSRX;
     }
 
-    public TalonSRX GetFollower() {
+    public CANSparkMax GetFollower() {
         return this.followerTalonSRX;
     }
 
@@ -114,8 +120,8 @@ public abstract class ArmMotorGroup {
         setPoint = point;
     }
 
-    public int getEncoderVal()
+    public double getEncoderVal()
     {
-        return this.encoder.get();
+        return this.encoder.getPosition();
     }
 }

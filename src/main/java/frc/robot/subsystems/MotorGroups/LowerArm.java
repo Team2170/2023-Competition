@@ -46,8 +46,8 @@ public class LowerArm extends ArmMotorGroup {
         driveMotors(Constants.LowerArm.upwardspeed);
     };
 
-    public void DisplayEncoder() {
-        super.DisplayEncoder();
+    public void displayEncoder() {
+        super.displayEncoder();
     }
 
     /**
@@ -58,8 +58,8 @@ public class LowerArm extends ArmMotorGroup {
      * This should map one inverted.
      */
     public void driveMotors(double speed) {
-        super.GetMaster().set(ControlMode.PercentOutput, speed);
-        super.GetFollower().set(ControlMode.PercentOutput, -speed);
+        super.GetMaster().set(speed);
+        super.GetFollower().set(-speed);
     }
 
     public void operate_arm(double manualDirection) {

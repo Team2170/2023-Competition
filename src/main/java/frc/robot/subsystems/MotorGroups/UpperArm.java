@@ -40,8 +40,8 @@ public class UpperArm extends ArmMotorGroup {
         driveMotors(Constants.UpperArm.upwardspeed);
     };
 
-    public void DisplayEncoder() {
-        super.DisplayEncoder();
+    public void displayEncoder() {
+        super.displayEncoder();
     }
 
     /**
@@ -50,8 +50,8 @@ public class UpperArm extends ArmMotorGroup {
      * @return void
      */
     public void driveMotors(double speed) {
-        super.GetMaster().set(ControlMode.PercentOutput, speed);
-        super.GetFollower().set(ControlMode.PercentOutput, -speed);
+        super.GetMaster().set(speed);
+        super.GetFollower().set(-speed);
     }
 
     public void operate_arm(double manualDirection) {

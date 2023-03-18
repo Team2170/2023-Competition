@@ -29,18 +29,18 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     // public Pigeon2 gyro;
     //public ADIS16448Swerve gyro;
     public NavXSwerve gyro;
+    
     /**
      * Simulation of the swerve drive.
      */
     public boolean lock_wheels;
-
     /**
      * 
      */
     public Swerve() {
         lock_wheels = false;
-        //gyro = new ADIS16448Swerve();
         gyro = new NavXSwerve(Port.kUSB);
+
         gyro.factoryDefault();
 
         zeroGyro();

@@ -86,7 +86,13 @@ public class Robot extends TimedRobot {
   //   Commands.run(
   //           () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
   //           () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
-  }
+  
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    if(m_autonomousCommand != null)
+    {
+      m_autonomousCommand.schedule();
+    }
+}
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -117,6 +123,12 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    if(m_autonomousCommand != null)
+    {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /** This function is called periodically during test mode. */

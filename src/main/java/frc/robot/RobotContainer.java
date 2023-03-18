@@ -19,6 +19,7 @@ import frc.lib.math.Conversions;
 import frc.robot.Constants.Auton;
 import frc.robot.autos.auto;
 import frc.robot.autos.driveOut;
+import frc.robot.commands.DriveForward;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.AutoBalancer;
 import frc.robot.subsystems.RobotArm;
@@ -89,7 +90,6 @@ public class RobotContainer {
         configureButtonBindings();
 
     }
-
     /**
      * Use this method to define your button->command mappings. Buttons can be
      * created by
@@ -111,7 +111,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new driveOut(s_Swerve, s_arm, s_Balancer);
+        return DriveForward.driveForward(s_Swerve);
     }
 
     public void periodic()
@@ -125,8 +125,15 @@ public class RobotContainer {
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
 
     } 
+
+
+
     public void autoPeriodic()
     {
+    }
+
+
+    public void auto_balance() {
         double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
         System.out.println(planeInclination);
         if(Math.abs(planeInclination) > Auton.balanceLimitDeg)
@@ -136,6 +143,6 @@ public class RobotContainer {
             Translation2d heading = new Translation2d(balance.getX(), 0);
             s_Swerve.drive(heading, 0, false, false);
 
-        }    
+        }  
     }
 }
