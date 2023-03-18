@@ -172,6 +172,6 @@ public final class Constants {
 
 
     public static final class Auton{
-        public static final double balanceScale = 3.0, balanceScalePow = 1.0, balanceLimitDeg = 2.0;
+        public static final double balanceScale = 3.0, balanceScalePow = 1.0, balanceLimitDeg = 5.0;
     }
 }
