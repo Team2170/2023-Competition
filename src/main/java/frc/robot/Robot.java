@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Auton;
-import frc.robot.autos.autoGroup;
-import frc.robot.autos.driveOut;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
@@ -116,7 +114,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robotContainer.periodic();
-    coneOrCube();
   }
 
   @Override
@@ -135,18 +132,5 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     m_robotContainer.autoPeriodic();
-  }
-
-  private void coneOrCube() {
-    if(controller.getAButtonPressed()) 
-      setColor(110/2, 0, 245/2);
-    else if(controller.getBButtonPressed())
-      setColor(245,245,5);
-  }
-
-  private void setColor(int r, int g, int b){
-    for(int i =0;i<m_ledBuffer.getLength();i++){
-      m_ledBuffer.setRGB(i, r, g, b);
-    }
   }
 }

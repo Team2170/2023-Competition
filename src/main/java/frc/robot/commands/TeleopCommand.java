@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.AutoBalancer;
 import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
 import java.util.function.BooleanSupplier;
@@ -16,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class TeleopCommand extends CommandBase {
     private Swerve s_Swerve;
     private RobotArm s_Arm;
-    private AutoBalancer s_Balancer;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
@@ -28,10 +26,9 @@ public class TeleopCommand extends CommandBase {
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
             DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
-            BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, BooleanSupplier slowButton, AutoBalancer s_Balancer) {
+            BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, BooleanSupplier slowButton) {
         this.s_Swerve = s_Swerve;
         this.s_Arm = arm;
-        this.s_Balancer = s_Balancer;
         addRequirements(s_Swerve);
 
         this.translationSup = translationSup;

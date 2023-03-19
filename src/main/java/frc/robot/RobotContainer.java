@@ -17,11 +17,10 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.math.Conversions;
 import frc.robot.Constants.Auton;
-import frc.robot.autos.auto;
-import frc.robot.autos.driveOut;
-import frc.robot.commands.DriveForward;
+import frc.robot.commands.LeftLaneCommand;
+import frc.robot.commands.MidLaneCommand;
+import frc.robot.commands.RightLaneCommand;
 import frc.robot.commands.TeleopCommand;
-import frc.robot.subsystems.AutoBalancer;
 import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
 
@@ -66,12 +65,17 @@ public class RobotContainer {
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
     public final RobotArm s_arm = new RobotArm();
-    public final AutoBalancer s_Balancer = new AutoBalancer();
     public double StartTime;
+
+    public LeftLaneCommand leftLane;
+    public MidLaneCommand midLane;
+    public RightLaneCommand rightLane;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        leftLane = new LeftLaneCommand(s_Swerve,s_arm);
         
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
@@ -83,8 +87,7 @@ public class RobotContainer {
                         s_arm,
                         () -> leftTrigger.getAsBoolean(),
                         () -> rightTrigger.getAsBoolean(),
-                        () -> slowDown.getAsBoolean(),
-                         s_Balancer));
+                        () -> slowDown.getAsBoolean()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -111,7 +114,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return DriveForward.driveForward(s_Swerve);
+        return leftLane.drive(s_Swerve);
     }
 
     public void periodic()
@@ -130,19 +133,5 @@ public class RobotContainer {
 
     public void autoPeriodic()
     {
-    }
-
-
-    public void auto_balance() {
-        double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
-        System.out.println(planeInclination);
-        if(Math.abs(planeInclination) > Auton.balanceLimitDeg)
-        {
-            Translation2d balance = s_Swerve.getBalanceTranslation();
-            System.out.println( "X: " + balance.getX()  +  " Y: " + balance.getY() );
-            Translation2d heading = new Translation2d(balance.getX(), 0);
-            s_Swerve.drive(heading, 0, false, false);
-
-        }  
     }
 }
