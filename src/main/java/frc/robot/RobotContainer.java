@@ -126,7 +126,6 @@ public class RobotContainer {
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
-
     } 
 
 

@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.Auton;
 import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
 import java.util.function.BooleanSupplier;
@@ -57,18 +58,28 @@ public class TeleopCommand extends CommandBase {
         SmartDashboard.putBoolean("Mod 1 Locked", false);
         SmartDashboard.putBoolean("Mod 2 Locked", false);
         SmartDashboard.putBoolean("Mod 3 Locked", false);
-
         /* Drive */
         if (s_Swerve.lock_wheels)
         {
             s_Swerve.lockPose();
         }
         else {
-            s_Swerve.drive(
+            if (balancing_mode)
+            {
+                double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
+                if(Math.abs(planeInclination) > Auton.balanceLimitDeg)
+                {
+                    Translation2d balance = s_Swerve.getBalanceTranslation();
+                    Translation2d heading = new Translation2d(balance.getX(), 0);
+                    s_Swerve.drive(heading, 0, false, false);
+                } 
+            }else{
+                s_Swerve.drive(
                     new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
                     swerve_rotation,
                     !robotCentricSup.getAsBoolean(),
                     true);
+            }
         }
     }
 }
