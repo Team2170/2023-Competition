@@ -1,59 +1,50 @@
 package frc.robot.subsystems.MotorGroups;
 
-import javax.swing.GroupLayout.Group;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.MathUtil; 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 
-public abstract class ArmMotorGroup {
-    private CANSparkMax masterTalonSRX;
-    private CANSparkMax followerTalonSRX;
-    public RelativeEncoder encoder;
+public abstract class ArmMotorGroup extends SubsystemBase {
+    public DutyCycleEncoder absoluteArmEncoder;
+    private ArmPIDController armPID;
+    private Rotation2d localSetpoint;
+    private CANSparkMax masterMotor;
+    private CANSparkMax followerMotor;
+    private SparkMaxAbsoluteEncoder absoluteEncoder;
     public String GroupName;
-    public int lowerBound;
-    public int upperBound;
-    private PIDController pidController;
-    private double sensorPosition, output, error, iLimit;
-    private double setPoint;
-
-    private SparkMaxPIDController m_pidController;
-
-    public ArmMotorGroup(int masterId, int followerId, int encoderIdA, int encoderIdB, PIDController pid, String name) {
-        masterTalonSRX = new CANSparkMax(masterId,MotorType.kBrushed);
-        followerTalonSRX = new CANSparkMax(followerId,MotorType.kBrushed);
-        followerTalonSRX.follow(masterTalonSRX);
+    public ArmMotorGroup(int masterId, int followerId, String name) {
+        masterMotor= new CANSparkMax(masterId,MotorType.kBrushed);
+        followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
+        followerMotor.follow(masterMotor);
         /* Factory Default all hardware to prevent unexpected behaviour */
-        masterTalonSRX.restoreFactoryDefaults();
-        followerTalonSRX.restoreFactoryDefaults();
-        followerTalonSRX.follow(masterTalonSRX);
+        masterMotor.restoreFactoryDefaults();
+        followerMotor.restoreFactoryDefaults();
+        followerMotor.follow(masterMotor);
 
-        GroupName = name;
-        setPoint = encoder.getPosition();
+        armPID =
+            new ArmPIDController(
+                ArmConstants.LowerArm.armPosition.P, ArmConstants.LowerArm.armPosition.I, ArmConstants.LowerArm.armPosition.D);
+        armPID.setAvoidanceRange(
+            Rotation2d.fromRadians(ArmConstants.LowerArm.maxRadians),
+            Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
+        armPID.setTolerance(0.15);
+        setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
+        setDefaultCommand(hold());
 
-        encoder = masterTalonSRX.getAlternateEncoder(4096);
-        m_pidController = masterTalonSRX.getPIDController();
+
     }
 
     public void displayEncoder() {
-        double position = encoder.getPosition();
-        double countsPerRev = encoder.getCountsPerRevolution();
-        SmartDashboard.putNumber(GroupName + "Position", position);
-        SmartDashboard.putNumber(GroupName + "Counts Per Revolution", countsPerRev);
     }
 
     /**
@@ -79,49 +70,92 @@ public abstract class ArmMotorGroup {
 
     public abstract void driveMotors(double speed);
 
-    public CANSparkMax GetMaster() {
-        return this.masterTalonSRX;
-    }
-
-    public CANSparkMax GetFollower() {
-        return this.followerTalonSRX;
-    }
-
-    public double GetLowerBound() {
-        return lowerBound;
-    }
-
-    public void SetLowerBound(int bound) {
-        this.lowerBound = bound;
-    }
-
-    public double GetUpperBound() {
-        return lowerBound;
-    }
-
-    public void SetUpperBound(int bound) {
-        this.upperBound = bound;
-    }
-
-    public abstract void operate_arm(double manualDirection);
-
-    public double operate()
+    public CANSparkMax GetMaster()
     {
-        // Get Encoder Position
-        sensorPosition = getEncoderVal();
-        //Get Error.
-        error = setPoint - sensorPosition;  // difference between setpoint/reference and current point
-        output = MathUtil.clamp(pidController.calculate(error), lowerBound, upperBound);
-        return output;
+        return masterMotor;
+    }
+    public CANSparkMax GetFollower()
+    {
+        return masterMotor;
     }
 
-    public void setPoint(double point)
-    {
-        setPoint = point;
-    }
 
-    public double getEncoderVal()
-    {
-        return this.encoder.getPosition();
-    }
+  public void setMotor(double percent) {
+    masterMotor.set(percent);
+  }
+
+  
+  /**
+   * Gets absolute position of the arm as a Rotation2d. Assumes the arm being level within frame is
+   * the 0 point on the x axis. Assumes CCW+.
+   *
+   * @return current angle of arm
+   */
+  private Rotation2d getShiftedAbsoluteDistance() {
+    var initialPosition =absoluteEncoder.getPosition() / ArmConstants.LowerArm.dutyCycleResolution;
+    return Rotation2d.fromRotations(initialPosition)
+        .minus(Rotation2d.fromRotations(ArmConstants.LowerArm.absolutePositionOffset));
+  }
+
+/**
+   * Set arm with PID.
+   *
+   * @param setpoint setpoint in radians.
+   */
+  public void setGoal(Rotation2d setpoint) {
+    localSetpoint = setpoint;
+    // armPID.setSetpoint(setpoint);
+    SmartDashboard.putNumber(GroupName + "Arm PID Setpoint", setpoint.getRadians());
+  }
+/**
+   * Gets position of arm in radians. Assumes the arm being level within frame is the 0 point on the
+   * x axis. Assumes CCW+.
+   *
+   * @return position in rad.
+   */
+  public Rotation2d getPosition() {
+    return ArmConstants.LowerArm.encoderInverted
+        ? getShiftedAbsoluteDistance().unaryMinus()
+        : getShiftedAbsoluteDistance();
+  }
+
+  public void setArmHold() {
+    var motorOutput =
+        MathUtil.clamp(
+            armPID.calculate(getPosition(), localSetpoint),
+            -ArmConstants.LowerArm.armPosition.peakOutput,
+            ArmConstants.LowerArm.armPosition.peakOutput);
+    var feedforward = getPosition().getCos() * ArmConstants.LowerArm.gravityFF;
+
+    setMotor(motorOutput + feedforward);
+
+    SmartDashboard.putNumber(GroupName + "Arm PID Output", motorOutput);
+    SmartDashboard.putNumber(GroupName + "Arm Feedforward", feedforward);
+  }
+
+  public Command hold() {
+    return Commands.run(() -> setArmHold(), this);
+  }
+  public Command holdUntilSetpoint() {
+    return hold().raceWith(Commands.waitSeconds(0.3).andThen(Commands.waitUntil(this::isAtSetpoint)));
+  }
+
+    /**
+   * If the arm is at setpoint.
+   *
+   * @return if arm is at setpoint.
+   */
+  public boolean isAtSetpoint() {
+    SmartDashboard.putBoolean(GroupName + "Arm PID at setpoint", armPID.atSetpoint());
+    return armPID.atSetpoint();
+  }
+
+  @Override
+  public void periodic() {
+    setArmHold();
+    SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", absoluteEncoder.getPosition());
+    SmartDashboard.putNumber(GroupName + " Arm Processed Absolute Encoder", getPosition().getRadians());
+    SmartDashboard.putNumber(GroupName + " Arm PID error", armPID.getPositionError());
+  }
+
 }

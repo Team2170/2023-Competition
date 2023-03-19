@@ -4,10 +4,17 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
  
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 
 public class LowerArm extends ArmMotorGroup {
+
+
     /**
      * @param masterId
      * @param followerId
@@ -15,8 +22,13 @@ public class LowerArm extends ArmMotorGroup {
      * @param encoderIdB
      * @param name
      */
-    public LowerArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name , double kP , double kI , double kD) {
-        super(masterId, followerId, encoderIdA, encoderIdB, new PIDController(kP, kI, kD) , name);  
+    public LowerArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name) {
+        super(masterId, followerId, name);  
+
+        absoluteArmEncoder = new DutyCycleEncoder(encoderIdA);
+        double diameter = 2;
+        double distancePerRotation = Math.PI * diameter;
+        absoluteArmEncoder.setDistancePerRotation(distancePerRotation);    
     }
 
     /**
@@ -70,5 +82,25 @@ public class LowerArm extends ArmMotorGroup {
         } else {
             stop_arm();
         }
-    }
+    }  
+
+    public Command ground() {
+        return runOnce(() -> setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.groundDegrees)))
+        .andThen(holdUntilSetpoint());
+      }
+    
+      public Command low() {
+        return runOnce(() -> setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.lowDegrees)))
+        .andThen(holdUntilSetpoint());
+      }
+    
+      public Command mid() {
+        return runOnce(() -> setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.midDegrees)))
+        .andThen(holdUntilSetpoint());
+      }
+    
+      public Command travel() {
+        return runOnce(() -> setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.travelDegrees)))
+        .andThen(holdUntilSetpoint());
+      }
 }

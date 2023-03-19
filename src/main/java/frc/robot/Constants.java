@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units; 
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
+import frc.robot.subsystems.MotorGroups.Gains;
 
 public final class Constants {
     public static final double stickDeadband = 0.1;
@@ -191,5 +192,42 @@ public final class Constants {
         public static double forwardDistance = 14;
         public static double backwardDistance = 5;
         public static double strafeDistance = 5;
+    }
+
+    public static final class ArmConstants {
+        public static final class LowerArm {
+            public static final int armPort = 30, dutyCyclePort = 0;
+            public static final Gains armPosition = new Gains(0.85, 0, 0, 0, 0, 1.0);
+            public static final double dutyCycleResolution = 1.0;
+            public static final double absolutePositionOffset = 0.557;
+            public static final double maxRadians = 1.5708;
+            public static final double minRadians = 0.52;
+            public static final double groundDegrees = 30.0;
+            public static final double travelDegrees = 30.0;
+            public static final double lowDegrees = 30.0;
+            public static final double midDegrees = 90.0;
+            public static final double toleranceRadians = 0.10;
+            public static final double armInputScale = 2 * Math.PI / (maxRadians - minRadians);
+            public static final double armOffset = minRadians + (maxRadians - minRadians) / 2;
+            public static final double gravityFF = 0.05;
+            public static final boolean encoderInverted = true;
+        }
+        public static final class UpperArm {
+            public static final int armPort = 30, dutyCyclePort = 0;
+            public static final Gains armPosition = new Gains(0.85, 0, 0, 0, 0, 1.0);
+            public static final double dutyCycleResolution = 1.0;
+            public static final double absolutePositionOffset = 0.557;
+            public static final double maxRadians = 3.92699;
+            public static final double minRadians = -0.52;
+            public static final double groundDegrees = 30.0;
+            public static final double travelDegrees = 30.0;
+            public static final double lowDegrees = 30.0;
+            public static final double midDegrees = 90.0;
+            public static final double toleranceRadians = 0.10;
+            public static final double armInputScale = 2 * Math.PI / (maxRadians - minRadians);
+            public static final double armOffset = minRadians + (maxRadians - minRadians) / 2;
+            public static final double gravityFF = 0.05;
+            public static final boolean encoderInverted = true;
+        }
     }
 }

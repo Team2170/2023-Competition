@@ -12,8 +12,8 @@ public class RobotArm extends SubsystemBase {
     public PnuematicsGroup grabber; 
 
     public RobotArm() {
-        lower_arm = new LowerArm(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderAId,Constants.LowerArm.EncoderBId,"Lower",0.1,0.1,0.1);
-        upper_arm = new UpperArm(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderAId,Constants.UpperArm.EncoderBId,"Upper",0.1,0.1,0.1);
+        lower_arm = new LowerArm(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderAId,Constants.LowerArm.EncoderBId,"Lower");
+        upper_arm = new UpperArm(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderAId,Constants.UpperArm.EncoderBId,"Upper");
         grabber = new PnuematicsGroup(Constants.ph);
     }
 
