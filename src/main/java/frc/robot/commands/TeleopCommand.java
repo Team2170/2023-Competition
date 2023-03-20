@@ -25,6 +25,8 @@ public class TeleopCommand extends CommandBase {
     private boolean set_wheelLock; 
     private BooleanSupplier slowButton;
 
+    private boolean isRunning;
+
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
             DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, RobotArm arm,
             BooleanSupplier leftTrigger, BooleanSupplier rightTrigger, BooleanSupplier slowButton) {
@@ -39,8 +41,10 @@ public class TeleopCommand extends CommandBase {
         this.leftTrigger = leftTrigger;
         this.rightTrigger = rightTrigger;
         this.slowButton = slowButton;
+        this.isRunning = true;
     }
 
+    
     @Override
     public void execute() {
         /* Get Values, Deadband */

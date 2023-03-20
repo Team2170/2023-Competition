@@ -71,28 +71,34 @@ public class RobotContainer {
     public MidLaneCommand midLane;
     public RightLaneCommand rightLane;
 
+    public Command tele;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         leftLane = new LeftLaneCommand(s_Swerve,s_arm);
-        
-        s_Swerve.setDefaultCommand(
-                new TeleopCommand(
-                        s_Swerve,
-                        () -> driver.getRawAxis(translationAxis),
-                        () -> driver.getRawAxis(strafeAxis),
-                        () -> driver.getRawAxis(rotationAxis),
-                        () -> robotCentric.getAsBoolean(),
-                        s_arm,
-                        () -> leftTrigger.getAsBoolean(),
-                        () -> rightTrigger.getAsBoolean(),
-                        () -> slowDown.getAsBoolean()));
 
         // Configure the button bindings
         configureButtonBindings();
 
     }
+
+    public void teleCreateCommand()
+    {
+        tele = new TeleopCommand(
+            s_Swerve,
+            () -> driver.getRawAxis(translationAxis),
+            () -> driver.getRawAxis(strafeAxis),
+            () -> driver.getRawAxis(rotationAxis),
+            () -> robotCentric.getAsBoolean(),
+            s_arm,
+            () -> leftTrigger.getAsBoolean(),
+            () -> rightTrigger.getAsBoolean(),
+            () -> slowDown.getAsBoolean());
+        s_Swerve.setDefaultCommand(tele);
+    }
+
     /**
      * Use this method to define your button->command mappings. Buttons can be
      * created by
@@ -116,6 +122,16 @@ public class RobotContainer {
         // An ExampleCommand will run in autonomous
         return leftLane.drive(s_Swerve);
     }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getTeleopCommand() {
+        // An ExampleCommand will run in autonomous
+        return tele;
+    }
+
 
     public void periodic()
     {
