@@ -1,5 +1,7 @@
 package frc.robot.subsystems.MotorGroups;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
@@ -8,6 +10,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -18,17 +21,20 @@ public abstract class ArmMotorGroup extends SubsystemBase {
     public DutyCycleEncoder absoluteArmEncoder;
     private ArmPIDController armPID;
     private Rotation2d localSetpoint;
-    private CANSparkMax masterMotor;
-    private CANSparkMax followerMotor;
+    private TalonSRX masterMotor;
+    private TalonSRX followerMotor;
     private SparkMaxAbsoluteEncoder absoluteEncoder;
     public String GroupName;
     public ArmMotorGroup(int masterId, int followerId, String name) {
-        masterMotor= new CANSparkMax(masterId,MotorType.kBrushed);
-        followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
-        followerMotor.follow(masterMotor);
+        masterMotor = new TalonSRX(masterId);
+        followerMotor = new TalonSRX(followerId);
+        //masterMotor= new CANSparkMax(masterId,MotorType.kBrushed);
+        //followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
         /* Factory Default all hardware to prevent unexpected behaviour */
-        masterMotor.restoreFactoryDefaults();
-        followerMotor.restoreFactoryDefaults();
+        //masterMotor.restoreFactoryDefaults();
+        //followerMotor.restoreFactoryDefaults();
+        masterMotor.configFactoryDefault();
+        followerMotor.configFactoryDefault();
         followerMotor.follow(masterMotor);
 
         // armPID =
@@ -70,19 +76,21 @@ public abstract class ArmMotorGroup extends SubsystemBase {
 
     public abstract void driveMotors(double speed);
 
-    public CANSparkMax GetMaster()
+    public TalonSRX GetMaster()
     {
         return masterMotor;
     }
-    public CANSparkMax GetFollower()
+    public TalonSRX GetFollower()
     {
         return masterMotor;
     }
 
 
   public void setMotor(double percent) {
-    masterMotor.set(percent);
+    masterMotor.set(ControlMode.PercentOutput,percent);
   }
+
+
 
   
   /**

@@ -62,17 +62,16 @@ public class LowerArm extends ArmMotorGroup {
         super.displayEncoder();
     }
 
-    /**
+        /**
      * Controls the motors.
      *
      * @return void
-     * We discovered one of the motors is working against the other.
-     * This should map one inverted.
      */
     public void driveMotors(double speed) {
-        super.GetMaster().set(speed);
-        super.GetFollower().set(-speed);
+        super.GetMaster().set(ControlMode.PercentOutput, speed);
+        super.GetFollower().set(ControlMode.PercentOutput, speed);
     }
+
 
     public void operate_arm(double manualDirection) {
         if (manualDirection > 0.2) {
