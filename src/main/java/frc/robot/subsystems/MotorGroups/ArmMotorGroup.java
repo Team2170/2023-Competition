@@ -31,15 +31,15 @@ public abstract class ArmMotorGroup extends SubsystemBase {
         followerMotor.restoreFactoryDefaults();
         followerMotor.follow(masterMotor);
 
-        armPID =
-            new ArmPIDController(
-                ArmConstants.LowerArm.armPosition.P, ArmConstants.LowerArm.armPosition.I, ArmConstants.LowerArm.armPosition.D);
-        armPID.setAvoidanceRange(
-            Rotation2d.fromRadians(ArmConstants.LowerArm.maxRadians),
-            Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
-        armPID.setTolerance(0.15);
-        setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
-        setDefaultCommand(hold());
+        // armPID =
+        //     new ArmPIDController(
+        //         ArmConstants.LowerArm.armPosition.P, ArmConstants.LowerArm.armPosition.I, ArmConstants.LowerArm.armPosition.D);
+        // armPID.setAvoidanceRange(
+        //     Rotation2d.fromRadians(ArmConstants.LowerArm.maxRadians),
+        //     Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
+        // armPID.setTolerance(0.15);
+        // setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
+        // setDefaultCommand(hold());
 
 
     }
@@ -152,10 +152,10 @@ public abstract class ArmMotorGroup extends SubsystemBase {
 
   @Override
   public void periodic() {
-    setArmHold();
-    SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", absoluteEncoder.getPosition());
-    SmartDashboard.putNumber(GroupName + " Arm Processed Absolute Encoder", getPosition().getRadians());
-    SmartDashboard.putNumber(GroupName + " Arm PID error", armPID.getPositionError());
+    // setArmHold();
+    // SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", absoluteEncoder.getPosition());
+    // SmartDashboard.putNumber(GroupName + " Arm Processed Absolute Encoder", getPosition().getRadians());
+    // SmartDashboard.putNumber(GroupName + " Arm PID error", armPID.getPositionError());
   }
 
 }

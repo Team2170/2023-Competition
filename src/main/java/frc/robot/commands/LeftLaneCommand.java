@@ -27,61 +27,63 @@ public class LeftLaneCommand extends AutoCommandBase {
         super(s_Swerve, s_Arm);
         super.s_Swerve = s_Swerve;
         super.s_Arm = s_Arm;
-        step_zero = true;
+        super.step_zero = true;
         addRequirements(s_Swerve);
         addRequirements(s_Arm);
     }
 
     public void handle_auto_drive(Swerve s_Swerve) {
-        if (step_zero) {
-            s_Arm.grabber.retract_piston();
-            Timer.delay(1);
-            s_Arm.grabber.extend_piston();
-            Timer.delay(1);
-            s_Arm.periodic(0, -0.5,false,false);
-            Timer.delay(0.25);   
-            s_Arm.periodic(0, 0,false,false);
-            step_one = true;
+        if (super.step_zero) {
+            // s_Arm.grabber.retract_piston();
+            // Timer.delay(1);
+            // s_Arm.grabber.extend_piston();
+            // Timer.delay(1);
+            // s_Arm.periodic(0, -0.5,false,false);
+            // Timer.delay(0.25);   
+            // s_Arm.periodic(0, 0,false,false);
+            super.step_zero = false;
+            super.step_one = true;
         } 
-        else if (step_one) {
-            if (checkRotate(s_Swerve, 0)) {
-                step_one = false;
-                step_two = true;
-            } else {
-                rotate_forward(s_Swerve, 0);
-            }
+        else if (super.step_one) {
+            super.step_one = false;
+            super.step_two = true;
         } 
-        else if (step_two) {
+        else if (super.step_two) {
             if (checkDistance_x(s_Swerve, 14)) {
-                step_two = false;
-                step_three = true;
+                System.out.println("REACHED SIDEWAYS STAGE");
+                if (checkDistance_y(s_Swerve, 5)) {
+                    super.step_two = false;
+                    super.step_three = false;
+                    super.step_four = true;
+                } else {
+                    drive_strafe_right(s_Swerve, 5);
+                }            
             } else {
-                drive_forward(s_Swerve, 14);
+                drive_backward(s_Swerve, 14);
             }
-        } else if (step_three) {
+        } 
+        else if (super.step_three) {
             if (checkDistance_y(s_Swerve, 5)) {
                 step_three = false;
                 step_four = true;
             } else {
                 drive_strafe_right(s_Swerve, 5);
             }
-        } else if (step_four) {
-            if (checkRotate(s_Swerve, -179)) {
-                step_four = false;
-                step_five = true;
-            } else {
-                rotate_backward(s_Swerve, -179);
-            }
-        }  else if (step_five) {
+        }
+        else if (super.step_four) {
+            super.step_four = false;
+            super.step_five = true;
+        }
+        else if (super.step_five) {
             if (checkDistance_x(s_Swerve, 5)) {
-                step_zero = false;
-                step_one = false;
-                step_two = false;
-                step_three = false;
-                step_four = false;
-                step_five = false;
+                super.step_zero = false;
+                super.step_one = false;
+                super.step_two = false;
+                super.step_three = false;
+                super.step_four = false;
+                super.step_five = false;
             } else {
-                drive_backward(s_Swerve, 5);
+                drive_forward(s_Swerve, 5);
             }
         } else {
             double planeInclination = s_Swerve.getPlaneInclination().getDegrees();

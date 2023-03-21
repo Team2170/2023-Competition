@@ -25,10 +25,10 @@ public class LowerArm extends ArmMotorGroup {
     public LowerArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name) {
         super(masterId, followerId, name);  
 
-        absoluteArmEncoder = new DutyCycleEncoder(encoderIdA);
-        double diameter = 2;
-        double distancePerRotation = Math.PI * diameter;
-        absoluteArmEncoder.setDistancePerRotation(distancePerRotation);    
+        // absoluteArmEncoder = new DutyCycleEncoder(encoderIdA);
+        // double diameter = 2;
+        // double distancePerRotation = Math.PI * diameter;
+        // absoluteArmEncoder.setDistancePerRotation(distancePerRotation);    
     }
 
     /**
