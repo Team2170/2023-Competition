@@ -50,7 +50,6 @@ public abstract class AutoCommandBase extends CommandBase {
 
     public boolean checkDistance_x(Swerve internalSwerve, double goalDistance) {
         double distance = internalSwerve.getPose().getX();
-        //System.out.println("Checking Distance X " + distance );
         if (Math.abs(distance) >= goalDistance) {
             return true;
         }
