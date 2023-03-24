@@ -139,15 +139,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
      * difficult to move. Forcing the robot to keep
      * the current pose.
      */
-    public void lockPose() {
-        // Sets states
-        SwerveModuleState mod0Lock = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
-        SwerveModuleState mod1Lock = new SwerveModuleState(0, Rotation2d.fromDegrees(135));
-        SwerveModuleState mod2Lock = new SwerveModuleState(0, Rotation2d.fromDegrees(225));
-        SwerveModuleState mod3Lock = new SwerveModuleState(0, Rotation2d.fromDegrees(315));
-        SwerveModuleState[] states = new SwerveModuleState[] { mod0Lock, mod1Lock, mod2Lock, mod3Lock };
-        setModuleStates(states);
-        
+    public void lockPose() {       
         SmartDashboard.putBoolean("Mod 0 Locked", true);
         SmartDashboard.putBoolean("Mod 1 Locked", true);
         SmartDashboard.putBoolean("Mod 2 Locked", true);

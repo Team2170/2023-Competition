@@ -50,14 +50,8 @@ public class LeftLaneCommand extends AutoCommandBase {
         } 
         else if (super.step_two) {
             if (checkDistance_x(s_Swerve, 14)) {
-                System.out.println("REACHED SIDEWAYS STAGE");
-                if (checkDistance_y(s_Swerve, 5)) {
-                    super.step_two = false;
-                    super.step_three = false;
-                    super.step_four = true;
-                } else {
-                    drive_strafe_right(s_Swerve, 5);
-                }            
+                super.step_two = false;
+                super.step_three = true;        
             } else {
                 drive_backward(s_Swerve, 14);
             }
