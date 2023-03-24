@@ -122,7 +122,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         //return leftLane.drive(s_Swerve);
-        return new ExampleAuto(s_Swerve);
+        return new ExampleAuto(s_Swerve).withTimeout(15);
     }
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
