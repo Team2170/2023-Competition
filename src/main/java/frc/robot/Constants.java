@@ -159,7 +159,7 @@ public final class Constants {
         public static int EncoderAId = 1;
         public static int EncoderBId = 0;
         public static double upwardspeed = 0.5;
-        public static double downwardspeed = -0.8;
+        public static double downwardspeed = -0.4;
     }
     public static final class UpperArm{
         public static int MasterId = 30;
@@ -169,7 +169,7 @@ public final class Constants {
         public static double upwardspeed = 0.35;
         public static double downwardspeed = -0.4;
     }
-    public static int ph = 30;
+    public static int ph = 37;
 
 
     public static final class Auton{
