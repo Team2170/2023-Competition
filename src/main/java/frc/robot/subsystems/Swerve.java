@@ -27,7 +27,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
 
     // public Pigeon2 gyro;
-    public ADIS16448Swerve gyro;
+    public NavXSwerve gyro;
     //public NavXSwerve gyro;
     
     /**
@@ -40,7 +40,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     public Swerve() {
         lock_wheels = false;
         //gyro = new NavXSwerve(Port.kUSB);
-        gyro = new ADIS16448Swerve();
+        gyro = new NavXSwerve(Port.kUSB);
         gyro.factoryDefault();
 
         zeroGyro();
@@ -60,7 +60,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getRawYaw(), getModulePositions());
         swerveBalance = new SwerveBalance(Auton.balanceScale, Auton.balanceScalePow);
     
     }
@@ -75,7 +75,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
                         translation.getX(),
                         translation.getY(),
                         rotation,
-                        getYaw())
+                        getRawYaw())
                         : new ChassisSpeeds(
                                 translation.getX(),
                                 translation.getY(),
@@ -103,7 +103,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
+        swerveOdometry.resetPosition(getRawYaw(), getModulePositions(), pose);
     }
 
     public SwerveModuleState[] getModuleStates() {
@@ -123,7 +123,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     }
 
     public void zeroGyro() {
-        gyro.setYaw(0);        
+        gyro.setOffset(gyro.getRawRotation3d());      
     }
 
 
@@ -156,7 +156,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
     @Override
     public void periodic() {
-        swerveOdometry.update(getYaw(), getModulePositions());
+        swerveOdometry.update(getRawYaw(), getModulePositions());
 
         for (SwerveModule mod : mSwerveMods) {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -186,45 +186,32 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
    */
   public Rotation2d getPlaneInclination() {
     return Rotation2d.fromRadians(
-        Math.atan(Math.hypot(getPitch().getTan(), getRoll().getTan())));
+        Math.atan(Math.hypot(getRawPitch().getTan(), getRawRoll().getTan())));
   }
 
-
-  public Rotation2d getYaw() {
-    double yaw = Math.toRadians(gyro.getYaw());
-    // if ( Constants.Swerve.invertGyro )
-    // {
-    //     yaw = gyro.getRotation3d().unaryMinus().getZ();
-    // }
-    // else
-    // {
-    //     yaw = gyro.getRotation3d().getZ();
-    // }
-    return Rotation2d.fromRadians(yaw);
+  public Rotation2d getRawYaw()
+  {
+    return Rotation2d.fromRadians(gyro.getRotation3d().getZ());
+  }
+  public double getYaw() {
+      double yaw = getRawYaw().getDegrees();
+      return yaw;
+  }
+  public Rotation2d getRawPitch()
+  {
+    return Rotation2d.fromRadians(gyro.getRotation3d().getY());
+  }
+  public double getPitch() {
+    double yaw = getRawPitch().getDegrees();
+    return yaw;
+}  
+public Rotation2d getRawRoll()
+{
+  return Rotation2d.fromRadians(gyro.getRotation3d().getX());
 }
-public Rotation2d getPitch() {
-    double pitch = Math.toRadians(gyro.getPitch());
-    // if ( Constants.Swerve.invertGyro )
-    // {
-    //     pitch = gyro.getRotation3d().unaryMinus().getY();
-    // }
-    // else
-    // {
-    //     pitch = gyro.getRotation3d().getY();
-    // }
-    return Rotation2d.fromRadians(pitch);
-}
-public Rotation2d getRoll() {
-    double roll = Math.toRadians(gyro.getRoll());
-    // if ( Constants.Swerve.invertGyro )
-    // {
-    //     roll = gyro.getRotation3d().unaryMinus().getX();
-    // }
-    // else
-    // {
-    //     roll = gyro.getRotation3d().getX();
-    // }
-    return Rotation2d.fromRadians(roll);
+public double getRoll() {
+    double yaw = Rotation2d.fromRadians(gyro.getRotation3d().getX()).getDegrees();
+    return yaw;
 }
 
 }
