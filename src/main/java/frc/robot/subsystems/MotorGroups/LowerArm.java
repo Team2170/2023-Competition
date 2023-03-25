@@ -3,19 +3,13 @@ package frc.robot.subsystems.MotorGroups;
 import frc.robot.Constants;
 
 public class LowerArm extends ArmMotorGroup {
-
-    public double maxRangeOutput = 0; // TUNE THIS!
-    public double minRangeOutput = 0; // TUNE THIS!
-
     /**
      * @param masterId
      * @param followerId
-     * @param encoderIdA
-     * @param encoderIdB
      * @param name
      */
-    public LowerArm(int masterId, int followerId, int encoderIdA, int encoderIdB, String name) {
-        super(masterId, followerId, name,Constants.LowerArm.gearDiameter);
+    public LowerArm(int masterId, int followerId, String name) {
+        super(masterId, followerId, name,Constants.LowerArm.gearRatio, Constants.LowerArm.offset);
 
     }
 
@@ -26,7 +20,7 @@ public class LowerArm extends ArmMotorGroup {
      */
     public void stop_arm() {
         driveMotors(0);
-    };
+    }
 
     /**
      * Lowers the robot based on human input on the controller.
@@ -35,7 +29,7 @@ public class LowerArm extends ArmMotorGroup {
      */
     public void lower_arm_manually() {
         driveMotors(Constants.LowerArm.downwardspeed);
-    };
+    }
 
     /**
      * Raises the robot based on human input on the controller.
@@ -44,7 +38,7 @@ public class LowerArm extends ArmMotorGroup {
      */
     public void raise_arm_manually() {
         driveMotors(Constants.LowerArm.upwardspeed);
-    };
+    }
 
     public void displayEncoder() {
         super.displayEncoder();
@@ -56,14 +50,7 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void driveMotors(double speed) {
-        if (getPosition().getDegrees() >= maxRangeOutput) {
-            return;
-        }
-        if (getPosition().getDegrees() >= maxRangeOutput) {
-            return;
-        }
-        super.GetMaster().set(speed);
-        super.GetFollower().set(speed);
+        super.driveMotors(speed, Constants.LowerArm.maxRangeOutput, Constants.LowerArm.minRangeOutput);
     }
 
     public void operate_arm(double manualDirection) {

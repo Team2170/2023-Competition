@@ -12,12 +12,14 @@ public class RobotArm extends SubsystemBase {
     public PnuematicsGroup grabber; 
 
     public RobotArm() {
-        lower_arm = new LowerArm(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,Constants.LowerArm.EncoderAId,Constants.LowerArm.EncoderBId,"Lower");
-        upper_arm = new UpperArm(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,Constants.UpperArm.EncoderAId,Constants.UpperArm.EncoderBId,"Upper");
+        lower_arm = new LowerArm(Constants.LowerArm.MasterId,Constants.LowerArm.FollowerId,"Lower");
+        upper_arm = new UpperArm(Constants.UpperArm.MasterId,Constants.UpperArm.FollowerId,"Upper");
         grabber = new PnuematicsGroup(Constants.ph);
     }
 
     public void periodic(double part_one_direction, double part_two_direction , boolean grab , boolean release) {
+        SmartDashboard.putBoolean( lower_arm.GroupName + " Moving " , false);
+        SmartDashboard.putBoolean( upper_arm.GroupName + " Moving " , false);
         lower_arm.operate_arm(part_one_direction);
         upper_arm.operate_arm(part_two_direction);
         SmartDashboard.putNumber("Arm Lower Direction", part_one_direction);
