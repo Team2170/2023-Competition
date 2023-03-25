@@ -21,76 +21,54 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 
 public class MidLaneCommand extends AutoCommandBase {
+    public boolean allow_auto;
 
-    public MidLaneCommand(Swerve s_Swervel, RobotArm s_Arm) {
-        super(s_Swervel, s_Arm);
+    public MidLaneCommand(Swerve s_Swerve, RobotArm s_Arm) {
+        super(s_Swerve, s_Arm);
         super.s_Swerve = s_Swerve;
         super.s_Arm = s_Arm;
-        step_zero = true;
+        super.step_zero = true;
         addRequirements(s_Swerve);
         addRequirements(s_Arm);
+        allow_auto = true;
+
     }
 
     public void handle_auto_drive(Swerve s_Swerve) {
-        if (step_zero) {
-            s_Arm.grabber.retract_piston();
-            Timer.delay(1);
-            s_Arm.grabber.extend_piston();
-            Timer.delay(1);
-            s_Arm.periodic(0, -0.5,false,false);
-            Timer.delay(0.25);   
-            s_Arm.periodic(0, 0,false,false);
-            step_one = true;
-        } 
-        else if (step_one) {
-            if (checkRotate(s_Swerve, 0)) {
-                step_one = false;
-                step_two = true;
-            } else {
-                rotate_forward(s_Swerve, 0);
-            }
-        } 
-        else if (step_two) {
-            if (checkDistance_x(s_Swerve, 14)) {
-                step_two = false;
-                step_three = true;
-            } else {
-                drive_forward(s_Swerve, 14);
-            }
-        } else if (step_three) {
-            step_three = false;
-            step_four = true;
-        } else if (step_four) {
-            if (checkRotate(s_Swerve, -179)) {
-                step_four = false;
-                step_five = true;
-            } else {
-                rotate_backward(s_Swerve, -179);
-            }
-        }  else if (step_five) {
-            if (checkDistance_x(s_Swerve, 5)) {
-                step_zero = false;
-                step_one = false;
-                step_two = false;
-                step_three = false;
-                step_four = false;
-                step_five = false;
-            } else {
-                drive_backward(s_Swerve, 5);
-            }
-        } else {
-            double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
-            if(Math.abs(planeInclination) > Auton.balanceLimitDeg)
-            {
-                Translation2d balance = s_Swerve.getBalanceTranslation();
-                Translation2d heading = new Translation2d(balance.getX(), 0);
-                s_Swerve.drive(heading, 0, false, false);
-            }  
+        
+        s_Arm.grabber.retract_piston();
+        Timer.delay(1);
+        s_Arm.grabber.extend_piston();
+        Timer.delay(1);
+        s_Arm.periodic(0, -0.5,false,false);
+        Timer.delay(0.25);   
+        s_Arm.periodic(0, 0,false,false);
+
+        do {
+            drive_backward(s_Swerve, 15);
+        } while (checkDistance_x(s_Swerve, 14));
+        do {
+            drive_forward(s_Swerve, 5);
+        } while (checkDistance_x(s_Swerve, 5));
+        allow_auto = false;
+    }
+
+    public void handle_auto_balance(Swerve s_Swerve) {
+        double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
+        if (Math.abs(planeInclination) > Auton.balanceLimitDeg) {
+            Translation2d balance = s_Swerve.getBalanceTranslation();
+            Translation2d heading = new Translation2d(balance.getX(), 0);
+            s_Swerve.drive(heading, 0, false, false);
         }
     }
 
     public CommandBase drive(Swerve s_Swerve) {
-        Command instantForward = new InstantCommand(() -> handle_auto_drive(s_Swerve), s_Swerve);
+        Command instantForward;
+        if (allow_auto) {
+            instantForward = new InstantCommand(() -> handle_auto_drive(s_Swerve), s_Swerve);
+        } else {
+            instantForward = new InstantCommand(() -> handle_auto_balance(s_Swerve), s_Swerve);
+        }
         Command RepeatedForward = new RepeatCommand(instantForward);
         return Commands.sequence(RepeatedForward);
     }

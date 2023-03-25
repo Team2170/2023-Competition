@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.math.Conversions;
 import frc.robot.Constants.Auton;
 import frc.robot.commands.ExampleAuto;
+import frc.robot.commands.ExampleAuto;
 import frc.robot.commands.LeftLaneCommand;
 import frc.robot.commands.MidLaneCommand;
 import frc.robot.commands.RightLaneCommand;
@@ -121,8 +122,8 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        //return leftLane.drive(s_Swerve);
-        return new ExampleAuto(s_Swerve).withTimeout(15);
+        return leftLane.drive(s_Swerve);
+        
     }
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -150,5 +151,6 @@ public class RobotContainer {
 
     public void autoPeriodic()
     {
+
     }
 }

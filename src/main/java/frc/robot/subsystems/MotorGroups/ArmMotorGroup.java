@@ -1,8 +1,11 @@
 package frc.robot.subsystems.MotorGroups;
 
+import javax.swing.GroupLayout.Group;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
@@ -21,22 +24,23 @@ public abstract class ArmMotorGroup extends SubsystemBase {
     public DutyCycleEncoder absoluteArmEncoder;
     private ArmPIDController armPID;
     private Rotation2d localSetpoint;
-    private TalonSRX masterMotor;
-    private TalonSRX followerMotor;
+    private CANSparkMax masterMotor;
+    private CANSparkMax followerMotor;
     private SparkMaxAbsoluteEncoder absoluteEncoder;
     public String GroupName;
     public ArmMotorGroup(int masterId, int followerId, String name) {
-        masterMotor = new TalonSRX(masterId);
-        followerMotor = new TalonSRX(followerId);
+        masterMotor = new CANSparkMax(masterId, MotorType.kBrushed);
+        followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
         //masterMotor= new CANSparkMax(masterId,MotorType.kBrushed);
         //followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
         /* Factory Default all hardware to prevent unexpected behaviour */
         //masterMotor.restoreFactoryDefaults();
         //followerMotor.restoreFactoryDefaults();
-        masterMotor.configFactoryDefault();
-        followerMotor.configFactoryDefault();
+        masterMotor.restoreFactoryDefaults();
+        followerMotor.restoreFactoryDefaults();
         followerMotor.follow(masterMotor);
 
+        absoluteEncoder = masterMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
         // armPID =
         //     new ArmPIDController(
         //         ArmConstants.LowerArm.armPosition.P, ArmConstants.LowerArm.armPosition.I, ArmConstants.LowerArm.armPosition.D);
@@ -46,7 +50,7 @@ public abstract class ArmMotorGroup extends SubsystemBase {
         // armPID.setTolerance(0.15);
         // setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
         // setDefaultCommand(hold());
-
+        GroupName = name;
 
     }
 
@@ -76,18 +80,18 @@ public abstract class ArmMotorGroup extends SubsystemBase {
 
     public abstract void driveMotors(double speed);
 
-    public TalonSRX GetMaster()
+    public CANSparkMax GetMaster()
     {
         return masterMotor;
     }
-    public TalonSRX GetFollower()
+    public CANSparkMax GetFollower()
     {
-        return masterMotor;
+        return followerMotor;
     }
 
 
   public void setMotor(double percent) {
-    masterMotor.set(ControlMode.PercentOutput,percent);
+    masterMotor.set(percent);
   }
 
 
@@ -161,9 +165,8 @@ public abstract class ArmMotorGroup extends SubsystemBase {
   @Override
   public void periodic() {
     // setArmHold();
-    // SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", absoluteEncoder.getPosition());
-    // SmartDashboard.putNumber(GroupName + " Arm Processed Absolute Encoder", getPosition().getRadians());
-    // SmartDashboard.putNumber(GroupName + " Arm PID error", armPID.getPositionError());
+    SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", absoluteEncoder.getPosition());
+    SmartDashboard.putNumber(GroupName + " Arm Processed Absolute Encoder", getPosition().getRadians());
+    //SmartDashboard.putNumber(GroupName + " Arm PID error", armPID.getPositionError());
   }
-
 }

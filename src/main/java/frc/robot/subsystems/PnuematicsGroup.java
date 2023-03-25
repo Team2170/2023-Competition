@@ -48,7 +48,7 @@ public class PnuematicsGroup {
             extend_piston();
         }
         else{
-            stop_piston();
+           // stop_piston();
         }
     }
 }

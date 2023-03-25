@@ -68,8 +68,8 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void driveMotors(double speed) {
-        super.GetMaster().set(ControlMode.PercentOutput, speed);
-        super.GetFollower().set(ControlMode.PercentOutput, speed);
+        super.GetMaster().set(speed);
+        super.GetFollower().set(speed);
     }
 
 

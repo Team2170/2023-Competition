@@ -40,7 +40,7 @@ public abstract class AutoCommandBase extends CommandBase {
     }
     
     public boolean checkRotate(Swerve internalSwerve, double goalDistance) {
-        double distance = internalSwerve.getYaw().getDegrees();
+        double distance = internalSwerve.getRawYaw().getDegrees();
         if (Math.abs(distance) >= goalDistance) {
             return false;
         }

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 
 public class LeftLaneCommand extends AutoCommandBase {
+    public boolean allow_auto;
 
     public LeftLaneCommand(Swerve s_Swerve, RobotArm s_Arm) {
         super(s_Swerve, s_Arm);
@@ -30,68 +31,48 @@ public class LeftLaneCommand extends AutoCommandBase {
         super.step_zero = true;
         addRequirements(s_Swerve);
         addRequirements(s_Arm);
+        allow_auto = true;
+
     }
 
     public void handle_auto_drive(Swerve s_Swerve) {
-        if (super.step_zero) {
-            // s_Arm.grabber.retract_piston();
-            // Timer.delay(1);
-            // s_Arm.grabber.extend_piston();
-            // Timer.delay(1);
-            // s_Arm.periodic(0, -0.5,false,false);
-            // Timer.delay(0.25);   
-            // s_Arm.periodic(0, 0,false,false);
-            super.step_zero = false;
-            super.step_one = true;
-        } 
-        else if (super.step_one) {
-            super.step_one = false;
-            super.step_two = true;
-        } 
-        else if (super.step_two) {
-            if (checkDistance_x(s_Swerve, 14)) {
-                super.step_two = false;
-                super.step_three = true;        
-            } else {
-                drive_backward(s_Swerve, 14);
-            }
-        } 
-        else if (super.step_three) {
-            if (checkDistance_y(s_Swerve, 5)) {
-                step_three = false;
-                step_four = true;
-            } else {
-                drive_strafe_right(s_Swerve, 5);
-            }
-        }
-        else if (super.step_four) {
-            super.step_four = false;
-            super.step_five = true;
-        }
-        else if (super.step_five) {
-            if (checkDistance_x(s_Swerve, 5)) {
-                super.step_zero = false;
-                super.step_one = false;
-                super.step_two = false;
-                super.step_three = false;
-                super.step_four = false;
-                super.step_five = false;
-            } else {
-                drive_forward(s_Swerve, 5);
-            }
-        } else {
-            double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
-            if(Math.abs(planeInclination) > Auton.balanceLimitDeg)
-            {
-                Translation2d balance = s_Swerve.getBalanceTranslation();
-                Translation2d heading = new Translation2d(balance.getX(), 0);
-                s_Swerve.drive(heading, 0, false, false);
-            }  
+        
+        s_Arm.grabber.retract_piston();
+        Timer.delay(1);
+        s_Arm.grabber.extend_piston();
+        Timer.delay(1);
+        s_Arm.periodic(0, -0.5,false,false);
+        Timer.delay(0.25);   
+        s_Arm.periodic(0, 0,false,false);
+
+        do {
+            drive_backward(s_Swerve, 14);
+        } while (checkDistance_x(s_Swerve, 14));
+        do {
+            drive_strafe_right(s_Swerve, 5);
+        } while (checkDistance_y(s_Swerve, 5));
+        do {
+            drive_forward(s_Swerve, 5);
+        } while (checkDistance_x(s_Swerve, 5));
+        allow_auto = false;
+    }
+
+    public void handle_auto_balance(Swerve s_Swerve) {
+        double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
+        if (Math.abs(planeInclination) > Auton.balanceLimitDeg) {
+            Translation2d balance = s_Swerve.getBalanceTranslation();
+            Translation2d heading = new Translation2d(balance.getX(), 0);
+            s_Swerve.drive(heading, 0, false, false);
         }
     }
 
     public CommandBase drive(Swerve s_Swerve) {
-        Command instantForward = new InstantCommand(() -> handle_auto_drive(s_Swerve), s_Swerve);
+        Command instantForward;
+        if (allow_auto) {
+            instantForward = new InstantCommand(() -> handle_auto_drive(s_Swerve), s_Swerve);
+        } else {
+            instantForward = new InstantCommand(() -> handle_auto_balance(s_Swerve), s_Swerve);
+        }
         Command RepeatedForward = new RepeatCommand(instantForward);
         return Commands.sequence(RepeatedForward);
     }
