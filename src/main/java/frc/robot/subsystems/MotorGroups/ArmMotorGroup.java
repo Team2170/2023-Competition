@@ -1,55 +1,35 @@
 package frc.robot.subsystems.MotorGroups;
 
-import javax.swing.GroupLayout.Group;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
 
 public abstract class ArmMotorGroup extends SubsystemBase {
     public DutyCycleEncoder absoluteArmEncoder;
-    private ArmPIDController armPID;
-    private Rotation2d localSetpoint;
     private CANSparkMax masterMotor;
     private CANSparkMax followerMotor;
-    private SparkMaxAbsoluteEncoder absoluteEncoder;
     public String GroupName;
-    public ArmMotorGroup(int masterId, int followerId, String name) {
+
+    private final AbsoluteEncoder m_turningEncoder;
+
+    private double gearRadius;
+
+    public ArmMotorGroup(int masterId, int followerId, String name, double gearDiameter) {
         masterMotor = new CANSparkMax(masterId, MotorType.kBrushed);
         followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
-        //masterMotor= new CANSparkMax(masterId,MotorType.kBrushed);
-        //followerMotor = new CANSparkMax(followerId,MotorType.kBrushed);
-        /* Factory Default all hardware to prevent unexpected behaviour */
-        //masterMotor.restoreFactoryDefaults();
-        //followerMotor.restoreFactoryDefaults();
         masterMotor.restoreFactoryDefaults();
         followerMotor.restoreFactoryDefaults();
         followerMotor.follow(masterMotor);
+        m_turningEncoder = masterMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
-        absoluteEncoder = masterMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
-        // armPID =
-        //     new ArmPIDController(
-        //         ArmConstants.LowerArm.armPosition.P, ArmConstants.LowerArm.armPosition.I, ArmConstants.LowerArm.armPosition.D);
-        // armPID.setAvoidanceRange(
-        //     Rotation2d.fromRadians(ArmConstants.LowerArm.maxRadians),
-        //     Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
-        // armPID.setTolerance(0.15);
-        // setGoal(Rotation2d.fromRadians(ArmConstants.LowerArm.minRadians));
-        // setDefaultCommand(hold());
+        gearRadius = gearDiameter / 2 ;
+
         GroupName = name;
 
     }
@@ -94,79 +74,22 @@ public abstract class ArmMotorGroup extends SubsystemBase {
     masterMotor.set(percent);
   }
 
-
-
-  
   /**
-   * Gets absolute position of the arm as a Rotation2d. Assumes the arm being level within frame is
-   * the 0 point on the x axis. Assumes CCW+.
+   * Gets position of arm in degrees. Need to calculate what the position is in radians to be accurate .
+   * how many rotations does the rev through bore turn to get the gear/sprocket one rotation?
+   * The assumption is that the arm is parallel to the floor is the 0 position and the arm rotates positive in the CCW+ range.
    *
-   * @return current angle of arm
-   */
-  private Rotation2d getShiftedAbsoluteDistance() {
-    var initialPosition =absoluteEncoder.getPosition() / ArmConstants.LowerArm.dutyCycleResolution;
-    return Rotation2d.fromRotations(initialPosition)
-        .minus(Rotation2d.fromRotations(ArmConstants.LowerArm.absolutePositionOffset));
-  }
-
-/**
-   * Set arm with PID.
-   *
-   * @param setpoint setpoint in radians.
-   */
-  public void setGoal(Rotation2d setpoint) {
-    localSetpoint = setpoint;
-    // armPID.setSetpoint(setpoint);
-    SmartDashboard.putNumber(GroupName + "Arm PID Setpoint", setpoint.getRadians());
-  }
-/**
-   * Gets position of arm in radians. Assumes the arm being level within frame is the 0 point on the
-   * x axis. Assumes CCW+.
-   *
-   * @return position in rad.
+   * @return position in degrees.
    */
   public Rotation2d getPosition() {
-    return ArmConstants.LowerArm.encoderInverted
-        ? getShiftedAbsoluteDistance().unaryMinus()
-        : getShiftedAbsoluteDistance();
-  }
-
-  public void setArmHold() {
-    var motorOutput =
-        MathUtil.clamp(
-            armPID.calculate(getPosition(), localSetpoint),
-            -ArmConstants.LowerArm.armPosition.peakOutput,
-            ArmConstants.LowerArm.armPosition.peakOutput);
-    var feedforward = getPosition().getCos() * ArmConstants.LowerArm.gravityFF;
-
-    setMotor(motorOutput + feedforward);
-
-    SmartDashboard.putNumber(GroupName + "Arm PID Output", motorOutput);
-    SmartDashboard.putNumber(GroupName + "Arm Feedforward", feedforward);
-  }
-
-  public Command hold() {
-    return Commands.run(() -> setArmHold(), this);
-  }
-  public Command holdUntilSetpoint() {
-    return hold().raceWith(Commands.waitSeconds(0.3).andThen(Commands.waitUntil(this::isAtSetpoint)));
-  }
-
-    /**
-   * If the arm is at setpoint.
-   *
-   * @return if arm is at setpoint.
-   */
-  public boolean isAtSetpoint() {
-    SmartDashboard.putBoolean(GroupName + "Arm PID at setpoint", armPID.atSetpoint());
-    return armPID.atSetpoint();
+    double radian = m_turningEncoder.getPosition() * Math.PI * gearRadius;
+    double degrees = Math.toDegrees(radian);
+    return new Rotation2d(degrees);
   }
 
   @Override
   public void periodic() {
-    // setArmHold();
-    SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", absoluteEncoder.getPosition());
-    SmartDashboard.putNumber(GroupName + " Arm Processed Absolute Encoder", getPosition().getRadians());
-    //SmartDashboard.putNumber(GroupName + " Arm PID error", armPID.getPositionError());
+    SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", m_turningEncoder.getPosition());
+    SmartDashboard.putNumber(GroupName + " Arm Position", getPosition().getDegrees());
   }
 }
