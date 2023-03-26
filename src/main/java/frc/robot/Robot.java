@@ -82,7 +82,18 @@ public class Robot extends TimedRobot {
   //   Commands.run(
   //           () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
   //           () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
-  
+  m_robotContainer.s_Swerve.resetModulesToAbsolute();
+  Timer.delay(0.1);
+  m_robotContainer.s_arm.periodic(0, 0.5,false,false);
+  Timer.delay(0.1);
+  m_robotContainer.s_arm.grabber.retract_piston();
+  Timer.delay(0.1);
+  m_robotContainer.s_arm.grabber.extend_piston();
+  Timer.delay(0.1);   
+  m_robotContainer.s_arm.periodic(0, 0,false,false);
+
+
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     if(m_autonomousCommand != null)
     {

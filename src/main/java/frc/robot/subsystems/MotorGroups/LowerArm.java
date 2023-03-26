@@ -1,5 +1,8 @@
 package frc.robot.subsystems.MotorGroups;
 
+import javax.lang.model.util.ElementScanner14;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class LowerArm extends ArmMotorGroup {
@@ -50,8 +53,17 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void driveMotors(double speed) {
-        super.driveMotors(speed, Constants.LowerArm.maxRangeOutput, Constants.LowerArm.minRangeOutput);
-    }
+        boolean allow_drive = false;
+        double arm_position = getPosition().getDegrees();
+        if (arm_position >= Constants.LowerArm.minRangeOutput && arm_position <= Constants.LowerArm.maxRangeOutput ) {
+            allow_drive = true;
+        }
+        SmartDashboard.putBoolean( GroupName + " Moving", allow_drive);
+        if(allow_drive)
+        {
+            super.driveMotors(speed, Constants.LowerArm.maxRangeOutput, Constants.LowerArm.minRangeOutput);
+        }
+     }
 
     public void operate_arm(double manualDirection) {
         if (manualDirection > 0.2) {

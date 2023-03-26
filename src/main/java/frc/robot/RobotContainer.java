@@ -25,6 +25,7 @@ import frc.robot.commands.RightLaneCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
+import pabeles.concurrency.ConcurrencyOps.Reset;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -52,7 +53,7 @@ public class RobotContainer {
     private final JoystickButton lockButton = new JoystickButton(driver, XboxController.Button.kB.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton slowDown = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-
+    private final JoystickButton resetModules = new JoystickButton(driver,XboxController.Button.kX.value);
  /* Operator Buttons */
     private final JoystickButton loadingButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton lowButton = new JoystickButton(operator, XboxController.Button.kX.value);
@@ -60,7 +61,7 @@ public class RobotContainer {
     private final JoystickButton highButton = new JoystickButton(operator, XboxController.Button.kY.value);
     private final JoystickButton leftTrigger = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
     private final JoystickButton rightTrigger = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
-   
+    
     private double traveled = 0.00;
     private double armdown_counter = 0;
 
@@ -113,6 +114,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         lockButton.whileTrue(new RepeatCommand(new InstantCommand(s_Swerve::lockPose, s_Swerve)));
+        resetModules.onTrue(new InstantCommand(() -> s_Swerve.hardReset()));
     }
 
     /**

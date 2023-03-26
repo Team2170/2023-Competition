@@ -70,7 +70,10 @@ public class SwerveModule {
     }
 
     private Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio));
+        // WHY DID THIS CHANGE!!!????
+        double degrees =Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio) % 360;
+        Rotation2d rotational = Rotation2d.fromDegrees(degrees);
+        return rotational ;
     }
 
     public Rotation2d getCanCoder(){

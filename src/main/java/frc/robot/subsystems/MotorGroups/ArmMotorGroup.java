@@ -86,40 +86,8 @@ public abstract class ArmMotorGroup extends SubsystemBase {
   public abstract void raise_arm_manually();
 
   public void driveMotors(double speed, double max, double min) {
-    boolean allow_drive = false;
-    if (getPosition().getDegrees() >= max) {
-      if (speed < 0) {
-        allow_drive = true;
-      }
-      else{
-        allow_drive = false;
-      }
-    }
-    else if (getPosition().getDegrees() <= min) {
-      if (speed > 0) {
-        allow_drive = true;
-      }
-      else{
-        allow_drive = false;
-      }
-    }
-    else if(speed == 0)
-    {
-      allow_drive = false;
-    }
-    else{
-      allow_drive = true;
-    }
-    SmartDashboard.putBoolean( GroupName + " Moving " , allow_drive);
-    if (allow_drive) {
-      masterMotor.set(speed);
-      followerMotor.set(speed);
-    }
-    else{
-      masterMotor.set(0);
-      followerMotor.set(0);
-    }
-
+    masterMotor.set(speed);
+    followerMotor.set(speed);
   }
 
   public CANSparkMax GetMaster() {
@@ -147,7 +115,7 @@ public abstract class ArmMotorGroup extends SubsystemBase {
    */
   public Rotation2d getPosition() {
     double radian = m_turningEncoder.getPosition() * 2 * Math.PI / gearRatio;
-    double modifiedReading = radian + Math.toRadians(armOffset); 
+    double modifiedReading = radian + Math.toRadians(armOffset);
     return new Rotation2d(modifiedReading);
   }
 

@@ -36,17 +36,9 @@ public class LeftLaneCommand extends AutoCommandBase {
     }
 
     public void handle_auto_drive(Swerve s_Swerve) {
-        
-        s_Arm.grabber.retract_piston();
-        Timer.delay(1);
-        s_Arm.grabber.extend_piston();
-        Timer.delay(1);
-        s_Arm.periodic(0, -0.5,false,false);
-        Timer.delay(0.25);   
-        s_Arm.periodic(0, 0,false,false);
-
+ 
         do {
-            drive_backward(s_Swerve, 14);
+            drive_forward(s_Swerve, 14);
         } while (checkDistance_x(s_Swerve, 14));
         do {
             drive_strafe_right(s_Swerve, 5);

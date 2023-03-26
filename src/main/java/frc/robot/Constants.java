@@ -16,7 +16,7 @@ public final class Constants {
 
     public static final class Swerve {
         public static final int pigeonID = 9;
-        public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
+        public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
 
         public static final COTSFalconSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
             COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
@@ -159,8 +159,8 @@ public final class Constants {
         public static double upwardspeed = 0.15;
         public static double downwardspeed = -0.2;
         public static double gearRatio = 1;
-        public static double minRangeOutput = 4;
-        public static double maxRangeOutput = 13;
+        public static double minRangeOutput = 10;
+        public static double maxRangeOutput = 33;
         public static double offset= 0;
     }
     public static final class UpperArm{

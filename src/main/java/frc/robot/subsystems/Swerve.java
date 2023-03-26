@@ -126,6 +126,11 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         gyro.setOffset(gyro.getRawRotation3d());      
     }
 
+    public void hardReset()
+    {
+        resetModulesToAbsolute();
+    }
+
 
 
     public void resetModulesToAbsolute() {
