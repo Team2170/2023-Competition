@@ -57,6 +57,9 @@ public class LowerArm extends ArmMotorGroup {
         double min = Constants.LowerArm.minRangeOutput;
         double max = Constants.LowerArm.maxRangeOutput;
         double arm_position = getPosition().getDegrees();
+        if (speed == 0) {
+            return;
+        }
         if (arm_position >= min && arm_position <= max) {
             if (speed == 0) {
                 allow_drive = false;

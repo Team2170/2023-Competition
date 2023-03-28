@@ -48,6 +48,9 @@ public class UpperArm extends ArmMotorGroup {
         double min = Constants.UpperArm.minRangeOutput;
         double max = Constants.UpperArm.maxRangeOutput;
         double arm_position = getPosition().getDegrees();
+        if (speed == 0) {
+            return;
+        }
         if (arm_position >= min && arm_position <= max) {
             if (speed == 0) {
                 allow_drive = false;
