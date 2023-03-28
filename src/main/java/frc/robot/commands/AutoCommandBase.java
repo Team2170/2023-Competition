@@ -39,86 +39,26 @@ public abstract class AutoCommandBase extends CommandBase {
         addRequirements(s_Arm);
     }
     
-    public boolean checkRotate(Swerve internalSwerve, double goalDistance) {
-        double distance = internalSwerve.getRawYaw().getDegrees();
+    public void drive_backward(Swerve s_Swerve) {
+        s_Swerve.drive(new Translation2d(1, 0), 0, true, true);
+    }
+    public void drive_forward(Swerve s_Swerve) {
+        s_Swerve.drive(new Translation2d(-1, 0), 0, true, true);
+    }
+    public void strafe_right(Swerve s_Swerve) {
+        s_Swerve.drive(new Translation2d(0, -1), 0, true, true);
+    }
+    public void strafe_left(Swerve s_Swerve) {
+        s_Swerve.drive(new Translation2d(0, 1), 0, true, true);
+    }
+
+    public boolean checkDistanceTraveled(Swerve internalSwerve, double goalDistance) {
+        double distance = internalSwerve.getDistanceTraveled();
         if (Math.abs(distance) >= goalDistance) {
             return false;
         }
         System.out.println("Robot Distance Traveled " + distance);
         return true;
-    }
-
-    public boolean checkDistance_x(Swerve internalSwerve, double goalDistance) {
-        double distance = internalSwerve.getPose().getX();
-        if (Math.abs(distance) >= goalDistance) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean checkDistance_y(Swerve internalSwerve, double goalDistance) {
-        double distance = internalSwerve.getPose().getY();
-        System.out.println("Checking Distance Y " + distance );
-        if (Math.abs(distance) >= goalDistance) {
-            return true;
-        }
-        return false;
-    }
-
-    public void drive_forward(Swerve s_Swerve, double travelDistanceLimit) {
-        boolean isDriving = checkDistance_x(s_Swerve, travelDistanceLimit * 0.3048);
-        double driveDirection = 0.00;
-        if (!isDriving) {
-            driveDirection = -1;
-        }
-        System.out.println("Driving Forward " + isDriving + " drive distance " + travelDistanceLimit);
-        s_Swerve.drive(new Translation2d(driveDirection, 0), 0, true, true);
-    }
-
-    public void drive_backward(Swerve s_Swerve, double travelDistanceLimit) {
-        boolean isDriving = checkDistance_x(s_Swerve, travelDistanceLimit * 0.3048);
-        double driveDirection = 0.00;
-        if (!isDriving) {
-            driveDirection = 1;
-        }
-        System.out.println("Driving Backward" + isDriving + " drive distance " + travelDistanceLimit);
-        s_Swerve.drive(new Translation2d(driveDirection, 0), 0, true, true);
-    }
-
-    public void drive_strafe_left(Swerve s_Swerve, double travelDistanceLimit) {
-        boolean isDriving = checkDistance_y(s_Swerve, travelDistanceLimit * 0.3048);
-        double driveDirection = 0.00;
-        if (!isDriving) {
-            driveDirection = 1;
-        }
-        System.out.println("Driving Left " + isDriving + " drive distance " + travelDistanceLimit);
-        s_Swerve.drive(new Translation2d(0, driveDirection), 0, true, true);
-    }
-
-    public void drive_strafe_right(Swerve s_Swerve, double travelDistanceLimit) {
-        boolean isDriving = checkDistance_y(s_Swerve, travelDistanceLimit * 0.3048);
-        double driveDirection = 0.00;
-        if (!isDriving) {
-            driveDirection = -1;
-        }
-        System.out.println("Driving Right " + isDriving + " drive distance " + travelDistanceLimit);
-        s_Swerve.drive(new Translation2d(0, driveDirection), 0, true, true);
-    }
-    public void rotate_backward(Swerve s_Swerve, double travelDistanceLimit) {
-        boolean isDriving = checkRotate(s_Swerve, travelDistanceLimit);
-        double driveRotate = 0.00;
-        if (isDriving) {
-            driveRotate = 180;
-        }
-        s_Swerve.drive(new Translation2d(0, 0), driveRotate, true, true);
-    }
-    public void rotate_forward(Swerve s_Swerve, double travelDistanceLimit) {
-        boolean isDriving = checkRotate(s_Swerve, travelDistanceLimit);
-        double driveRotate = 0.00;
-        if (isDriving) {
-            driveRotate = 180;
-        }
-        s_Swerve.drive(new Translation2d(0, 0), driveRotate, true, true);
     }
 
     public void lock_wheels(Swerve s_Swerve) {

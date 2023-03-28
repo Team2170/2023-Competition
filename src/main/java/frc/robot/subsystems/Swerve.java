@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition; 
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
@@ -25,21 +25,21 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
     private final SwerveBalance swerveBalance;
 
-
     // public Pigeon2 gyro;
     public NavXSwerve gyro;
-    //public NavXSwerve gyro;
-    
+    // public NavXSwerve gyro;
+
     /**
      * Simulation of the swerve drive.
      */
     public boolean lock_wheels;
+
     /**
      * 
      */
     public Swerve() {
         lock_wheels = false;
-        //gyro = new NavXSwerve(Port.kUSB);
+        // gyro = new NavXSwerve(Port.kUSB);
         gyro = new NavXSwerve(Port.kUSB);
         gyro.factoryDefault();
 
@@ -62,13 +62,18 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getRawYaw(), getModulePositions());
         swerveBalance = new SwerveBalance(Auton.balanceScale, Auton.balanceScalePow);
-    
+
     }
-    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, double reductionFactor){
-        Translation2d reducedTranslation = translation.times(reductionFactor);//new Translation2d(translation.getX() * reductionFactor,translation.getY() * reductionFactor); 
+
+    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop,
+            double reductionFactor) {
+        Translation2d reducedTranslation = translation.times(reductionFactor);// new Translation2d(translation.getX() *
+                                                                              // reductionFactor,translation.getY() *
+                                                                              // reductionFactor);
         double reducedRotation = rotation * reductionFactor;
         drive(reducedTranslation, reducedRotation, fieldRelative, isOpenLoop);
     }
+
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -87,8 +92,6 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         }
     }
 
-
-
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
@@ -96,7 +99,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
-    } 
+    }
 
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
@@ -121,17 +124,22 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         }
         return positions;
     }
+    public double[] getModuleDistances() {
+        double[] positions = new double[4];
+        for (SwerveModule mod : mSwerveMods) {
+            positions[mod.moduleNumber] = mod.getDistanceMeters();
+        }
+        return positions;
+    }
+
 
     public void zeroGyro() {
-        gyro.setOffset(gyro.getRawRotation3d());      
+        gyro.setOffset(gyro.getRawRotation3d());
     }
 
-    public void hardReset()
-    {
+    public void hardReset() {
         resetModulesToAbsolute();
     }
-
-
 
     public void resetModulesToAbsolute() {
         for (SwerveModule mod : mSwerveMods) {
@@ -144,7 +152,7 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
      * difficult to move. Forcing the robot to keep
      * the current pose.
      */
-    public void lockPose() {       
+    public void lockPose() {
         SmartDashboard.putBoolean("Mod 0 Locked", true);
         SmartDashboard.putBoolean("Mod 1 Locked", true);
         SmartDashboard.putBoolean("Mod 2 Locked", true);
@@ -162,53 +170,67 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         }
     }
 
-
     /* HANDLES NEW AUTOBALANCER */
-    
-    
-    /**
-   * Gets the translation of the robot according to the swerve balance updater.
-   *
-   * @return translation of the robot.
-   */
-  public Translation2d getBalanceTranslation() {
-    var gyroRot3d = gyro.getRotation3d();
-    return swerveBalance.calculate(gyroRot3d).unaryMinus();
-  }
 
     /**
-   * Gets plane inclination with current robot plane and the plane z = 0.
-   *
-   * @return plane inclination in radians.
-   */
-  public Rotation2d getPlaneInclination() {
-    return Rotation2d.fromRadians(
-        Math.atan(Math.hypot(getRawPitch().getTan(), getRawRoll().getTan())));
-  }
+     * Gets the translation of the robot according to the swerve balance updater.
+     *
+     * @return translation of the robot.
+     */
+    public Translation2d getBalanceTranslation() {
+        var gyroRot3d = gyro.getRotation3d();
+        return swerveBalance.calculate(gyroRot3d).unaryMinus();
+    }
 
-  public Rotation2d getRawYaw()
-  {
-    return Rotation2d.fromRadians(gyro.getRotation3d().getZ());
-  }
-  public double getYaw() {
-      double yaw = getRawYaw().getDegrees();
-      return yaw;
-  }
-  public Rotation2d getRawPitch()
-  {
-    return Rotation2d.fromRadians(gyro.getRotation3d().getY());
-  }
-  public double getPitch() {
-    double yaw = getRawPitch().getDegrees();
-    return yaw;
-}  
-public Rotation2d getRawRoll()
-{
-  return Rotation2d.fromRadians(gyro.getRotation3d().getX());
-}
-public double getRoll() {
-    double yaw = Rotation2d.fromRadians(gyro.getRotation3d().getX()).getDegrees();
-    return yaw;
-}
+    /**
+     * Gets plane inclination with current robot plane and the plane z = 0.
+     *
+     * @return plane inclination in radians.
+     */
+    public Rotation2d getPlaneInclination() {
+        return Rotation2d.fromRadians(
+                Math.atan(Math.hypot(getRawPitch().getTan(), getRawRoll().getTan())));
+    }
 
+    public Rotation2d getRawYaw() {
+        return Rotation2d.fromRadians(gyro.getRotation3d().getZ());
+    }
+
+    public double getYaw() {
+        double yaw = getRawYaw().getDegrees();
+        return yaw;
+    }
+
+    public Rotation2d getRawPitch() {
+        return Rotation2d.fromRadians(gyro.getRotation3d().getY());
+    }
+
+    public double getPitch() {
+        double yaw = getRawPitch().getDegrees();
+        return yaw;
+    }
+
+    public Rotation2d getRawRoll() {
+        return Rotation2d.fromRadians(gyro.getRotation3d().getX());
+    }
+
+    public double getRoll() {
+        double yaw = Rotation2d.fromRadians(gyro.getRotation3d().getX()).getDegrees();
+        return yaw;
+    }
+
+    public double getDistanceTraveled()
+    {
+        double average_distance = 0.00;
+        double sum = 0; //average will have decimal point
+        double[] modDistances = getModuleDistances();
+        for(int i=0; i < modDistances.length; i++){
+        //parse string to double, note that this might fail if you encounter a non-numeric string
+        //Note that we could also do Integer.valueOf( args[i] ) but this is more flexible
+        sum += Double.valueOf( modDistances[i] ); 
+        }
+
+        double average = sum/modDistances.length;
+        return average;
+    }
 }

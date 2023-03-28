@@ -32,20 +32,57 @@ public class LeftLaneCommand extends AutoCommandBase {
         addRequirements(s_Swerve);
         addRequirements(s_Arm);
         allow_auto = true;
+    }
 
+
+
+
+    public void drive_away()
+    {
+        if(s_Swerve.gyro.getYaw() >= 100)
+        {
+            drive_backward(s_Swerve);
+        }
+        else if(s_Swerve.gyro.getYaw() <= -100)
+        {
+            drive_backward(s_Swerve);
+        }
+        else{
+            drive_forward(s_Swerve);
+        }
+    }
+    public void drive_toward()
+    {
+        if(s_Swerve.gyro.getYaw() <= 100)
+        {
+            drive_forward(s_Swerve);
+        }
+        else if(s_Swerve.gyro.getYaw() >= -100)
+        {
+            drive_forward(s_Swerve);
+        }
+        else{
+            drive_backward(s_Swerve);
+        }
     }
 
     public void handle_auto_drive(Swerve s_Swerve) {
- 
+        double distance = 14;
+        // Drive Away
         do {
-            drive_forward(s_Swerve, 14);
-        } while (checkDistance_x(s_Swerve, 14));
+            drive_away();
+        } while (checkDistanceTraveled(s_Swerve, distance));
+        distance = 19;
+        // Strafe Right
         do {
-            drive_strafe_right(s_Swerve, 5);
-        } while (checkDistance_y(s_Swerve, 5));
+            strafe_right(s_Swerve);
+        } while (checkDistanceTraveled(s_Swerve, distance));
+        distance = 24;
+        // Drive toward
         do {
-            drive_forward(s_Swerve, 5);
-        } while (checkDistance_x(s_Swerve, 5));
+            drive_toward();
+        } while (checkDistanceTraveled(s_Swerve, distance));
+        // Strafe Right
         allow_auto = false;
     }
 
