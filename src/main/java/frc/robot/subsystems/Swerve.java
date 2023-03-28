@@ -221,16 +221,14 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
     public double getDistanceTraveled()
     {
-        double average_distance = 0.00;
-        double sum = 0; //average will have decimal point
+        double sum = 0; 
         double[] modDistances = getModuleDistances();
-        for(int i=0; i < modDistances.length; i++){
-        //parse string to double, note that this might fail if you encounter a non-numeric string
-        //Note that we could also do Integer.valueOf( args[i] ) but this is more flexible
-        sum += Double.valueOf( modDistances[i] ); 
-        }
-
-        double average = sum/modDistances.length;
+        double average = modDistances[0];
         return average;
+    }
+
+    public void stop_drive()
+    {
+        drive(new Translation2d(0, 0), 0, true, true);
     }
 }

@@ -36,11 +36,11 @@ public class RightLaneCommand extends AutoCommandBase {
 
     public void drive_away()
     {
-        if(s_Swerve.gyro.getYaw() >= 100)
+        if(s_Swerve.getYaw() >= 100)
         {
             drive_backward(s_Swerve);
         }
-        else if(s_Swerve.gyro.getYaw() <= -100)
+        else if(s_Swerve.getYaw() <= -100)
         {
             drive_backward(s_Swerve);
         }
@@ -68,17 +68,17 @@ public class RightLaneCommand extends AutoCommandBase {
         // Drive Away
         do {
             drive_away();
-        } while (checkDistanceTraveled(s_Swerve, distance));
+        } while (checkDistanceTraveled(s_Swerve, distance,false));
         distance = 19;
         // Strafe Right
         do {
             strafe_left(s_Swerve);
-        } while (checkDistanceTraveled(s_Swerve, distance));
+        } while (checkDistanceTraveled(s_Swerve, distance,false));
         distance = 24;
         // Drive toward
         do {
             drive_toward();
-        } while (checkDistanceTraveled(s_Swerve, distance));
+        } while (checkDistanceTraveled(s_Swerve, distance,true));
         // Strafe Right
         allow_auto = false;
     }

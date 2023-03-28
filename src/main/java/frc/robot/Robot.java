@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Auton;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
@@ -82,15 +83,15 @@ public class Robot extends TimedRobot {
   //   Commands.run(
   //           () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
   //           () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
-  m_robotContainer.s_Swerve.resetModulesToAbsolute();
-  Timer.delay(0.1);
-  m_robotContainer.s_arm.periodic(0, 0.5,false,false);
-  Timer.delay(0.1);
-  m_robotContainer.s_arm.grabber.retract_piston();
-  Timer.delay(0.1);
-  m_robotContainer.s_arm.grabber.extend_piston();
-  Timer.delay(0.1);   
-  m_robotContainer.s_arm.periodic(0, 0,false,false);
+    m_robotContainer.s_Swerve.resetModulesToAbsolute();
+    Timer.delay(0.1);
+    m_robotContainer.s_arm.periodic(0, 0.5,false,false);
+    Timer.delay(0.1);
+    m_robotContainer.s_arm.grabber.retract_piston();
+    Timer.delay(0.1);
+    m_robotContainer.s_arm.grabber.extend_piston();
+    Timer.delay(0.1);   
+    m_robotContainer.s_arm.periodic(0, 0,false,false);
 
 
 
@@ -110,8 +111,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
       // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
+
     
 
     // This makes sure that the autonomous stops running when
@@ -123,6 +127,8 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.teleCreateCommand();
+    m_robotContainer.s_Swerve.stop_drive();
+    m_robotContainer.s_Swerve.hardReset();
   }
 
   /** This function is called periodically during operator control. */

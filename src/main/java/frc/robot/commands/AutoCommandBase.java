@@ -40,24 +40,34 @@ public abstract class AutoCommandBase extends CommandBase {
     }
     
     public void drive_backward(Swerve s_Swerve) {
-        s_Swerve.drive(new Translation2d(1, 0), 0, true, true);
-    }
-    public void drive_forward(Swerve s_Swerve) {
         s_Swerve.drive(new Translation2d(-1, 0), 0, true, true);
     }
-    public void strafe_right(Swerve s_Swerve) {
-        s_Swerve.drive(new Translation2d(0, -1), 0, true, true);
+    public void drive_forward(Swerve s_Swerve) {
+        s_Swerve.drive(new Translation2d(1, 0), 0, true, true);
     }
-    public void strafe_left(Swerve s_Swerve) {
+    public void strafe_right(Swerve s_Swerve) {
         s_Swerve.drive(new Translation2d(0, 1), 0, true, true);
     }
+    public void strafe_left(Swerve s_Swerve) {
+        s_Swerve.drive(new Translation2d(0, -1), 0, true, true);
+    }
 
-    public boolean checkDistanceTraveled(Swerve internalSwerve, double goalDistance) {
+    public boolean checkDistanceTraveled(Swerve internalSwerve, double goalDistance, boolean backwards) {
         double distance = internalSwerve.getDistanceTraveled();
-        if (Math.abs(distance) >= goalDistance) {
-            return false;
+        SmartDashboard.putNumber("Auto Distance Traveled " , distance);
+        if( backwards )
+        {
+            if (Math.abs(distance) <= goalDistance) {
+                return false;
+            }
         }
-        System.out.println("Robot Distance Traveled " + distance);
+        else{
+            if (Math.abs(distance) >= goalDistance) {
+                return false;
+            }
+        }
+
+        
         return true;
     }
 

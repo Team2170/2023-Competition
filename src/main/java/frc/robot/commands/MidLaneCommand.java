@@ -33,66 +33,42 @@ public class MidLaneCommand extends AutoCommandBase {
         allow_auto = true;
 
     }
-    public void drive_away()
-    {
-        if(s_Swerve.gyro.getYaw() >= 100)
-        {
-            drive_backward(s_Swerve);
-        }
-        else if(s_Swerve.gyro.getYaw() <= -100)
-        {
-            drive_backward(s_Swerve);
-        }
-        else{
-            drive_forward(s_Swerve);
-        }
-    }
-    public void drive_toward()
-    {
-        if(s_Swerve.gyro.getYaw() <= 100)
-        {
-            drive_forward(s_Swerve);
-        }
-        else if(s_Swerve.gyro.getYaw() >= -100)
-        {
-            drive_forward(s_Swerve);
-        }
-        else{
-            drive_backward(s_Swerve);
-        }
-    }
+
 
     public void handle_auto_drive(Swerve s_Swerve) {
-        double distance = 14;
+        double distance = 2.5;
         // Drive Away
         do {
-            drive_away();
-        } while (checkDistanceTraveled(s_Swerve, distance));
-        distance = 19;
+            drive_backward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, false ));
+        distance = 1;
         // Drive toward
         do {
-            drive_toward();
-        } while (checkDistanceTraveled(s_Swerve, distance));
+            drive_forward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, true));
         // Strafe Right
         allow_auto = false;
     }
-
     public void handle_auto_balance(Swerve s_Swerve) {
         double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
+        SmartDashboard.putNumber("gyroPitch", planeInclination);
         if (Math.abs(planeInclination) > Auton.balanceLimitDeg) {
             Translation2d balance = s_Swerve.getBalanceTranslation();
             Translation2d heading = new Translation2d(balance.getX(), 0);
-            s_Swerve.drive(heading, 0, false, false);
+            s_Swerve.drive(heading, 0, false, false,0.25);
+        }
+        else{
+            s_Swerve.drive(new Translation2d(0,0), 0, false, false,0.25);
         }
     }
 
     public CommandBase drive(Swerve s_Swerve) {
+        handle_auto_drive(s_Swerve);
         Command instantForward;
-        if (allow_auto) {
-            instantForward = new InstantCommand(() -> handle_auto_drive(s_Swerve), s_Swerve);
-        } else {
-            instantForward = new InstantCommand(() -> handle_auto_balance(s_Swerve), s_Swerve);
-        }
+        s_Swerve.stop_drive();
+        instantForward = new InstantCommand(() -> handle_auto_balance(s_Swerve), s_Swerve);
         Command RepeatedForward = new RepeatCommand(instantForward);
         return Commands.sequence(RepeatedForward);
     }

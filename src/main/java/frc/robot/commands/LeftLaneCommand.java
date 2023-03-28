@@ -34,59 +34,35 @@ public class LeftLaneCommand extends AutoCommandBase {
         allow_auto = true;
     }
 
-
-
-
-    public void drive_away()
-    {
-        if(s_Swerve.gyro.getYaw() >= 100)
-        {
-            drive_backward(s_Swerve);
-        }
-        else if(s_Swerve.gyro.getYaw() <= -100)
-        {
-            drive_backward(s_Swerve);
-        }
-        else{
-            drive_forward(s_Swerve);
-        }
-    }
-    public void drive_toward()
-    {
-        if(s_Swerve.gyro.getYaw() <= 100)
-        {
-            drive_forward(s_Swerve);
-        }
-        else if(s_Swerve.gyro.getYaw() >= -100)
-        {
-            drive_forward(s_Swerve);
-        }
-        else{
-            drive_backward(s_Swerve);
-        }
-    }
-
     public void handle_auto_drive(Swerve s_Swerve) {
-        double distance = 14;
+
+        double distance = 2.5;
         // Drive Away
         do {
-            drive_away();
-        } while (checkDistanceTraveled(s_Swerve, distance));
-        distance = 19;
+            drive_backward(s_Swerve);
+
+            SmartDashboard.putBoolean("Autobalance", false);
+        } while (checkDistanceTraveled(s_Swerve, distance, false));
+        distance = 3;
         // Strafe Right
         do {
             strafe_right(s_Swerve);
-        } while (checkDistanceTraveled(s_Swerve, distance));
-        distance = 24;
+
+            SmartDashboard.putBoolean("Autobalance", false);
+        } while (checkDistanceTraveled(s_Swerve, distance, false));
+        distance = 5;
         // Drive toward
         do {
-            drive_toward();
-        } while (checkDistanceTraveled(s_Swerve, distance));
+            drive_forward(s_Swerve);
+
+            SmartDashboard.putBoolean("Autobalance", false);
+        } while (checkDistanceTraveled(s_Swerve, distance, true));
         // Strafe Right
         allow_auto = false;
     }
 
     public void handle_auto_balance(Swerve s_Swerve) {
+        SmartDashboard.putBoolean("Autobalance", true);
         double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
         if (Math.abs(planeInclination) > Auton.balanceLimitDeg) {
             Translation2d balance = s_Swerve.getBalanceTranslation();

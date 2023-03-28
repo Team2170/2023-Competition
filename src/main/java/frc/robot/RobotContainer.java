@@ -80,7 +80,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        leftLane = new LeftLaneCommand(s_Swerve,s_arm);
+        midLane = new MidLaneCommand(s_Swerve,s_arm);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -124,7 +124,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return leftLane.drive(s_Swerve);
+        return midLane.drive(s_Swerve);
         
     }
     /**
