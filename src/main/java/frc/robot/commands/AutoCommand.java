@@ -45,7 +45,7 @@ public class AutoCommand extends AutoCommandBase {
         s_Arm.grabber.extend_piston();
         Timer.delay(0.3);   
         s_Arm.periodic(0, 0,false,false);
-        double distance = 2.5;
+        double distance = 4.5;
         // Drive Away
         do {
             drive_backward(s_Swerve);
@@ -64,13 +64,13 @@ public class AutoCommand extends AutoCommandBase {
         s_Arm.grabber.extend_piston();
         Timer.delay(0.3);   
         s_Arm.periodic(0, 0,false,false);
-        double distance = 2.5;
+        double distance = 4;
         // Drive Away
         do {
             drive_backward(s_Swerve);
             SmartDashboard.putBoolean("autobalance", allow_auto);
         } while (checkDistanceTraveled(s_Swerve, distance, false ));
-        distance = 1;
+        distance = 2;
         // Drive toward
         do {
             drive_forward(s_Swerve);
