@@ -75,5 +75,5 @@ public abstract class AutoCommandBase extends CommandBase {
         s_Swerve.lockPose();
     }
 
-    public abstract CommandBase drive(Swerve s_Swerve);
+    public abstract CommandBase drive(Swerve s_Swerve, String name);
 }

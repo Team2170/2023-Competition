@@ -20,10 +20,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 
-public class MidLaneCommand extends AutoCommandBase {
+public class AutoCommand extends AutoCommandBase {
     public boolean allow_auto;
 
-    public MidLaneCommand(Swerve s_Swerve, RobotArm s_Arm) {
+    public String internal_name;
+    public AutoCommand(Swerve s_Swerve, RobotArm s_Arm) {
         super(s_Swerve, s_Arm);
         super.s_Swerve = s_Swerve;
         super.s_Arm = s_Arm;
@@ -31,11 +32,38 @@ public class MidLaneCommand extends AutoCommandBase {
         addRequirements(s_Swerve);
         addRequirements(s_Arm);
         allow_auto = true;
-
     }
 
-
-    public void handle_auto_drive(Swerve s_Swerve) {
+    public void forward_only(Swerve s_Swerve)
+    {
+        Timer.delay(0.1);
+        s_Arm.upper_arm.driveMotors(-0.2);
+        s_Arm.lower_arm.driveMotors(-0.2);
+        Timer.delay(0.5);
+        s_Arm.grabber.retract_piston();
+        Timer.delay(0.3);
+        s_Arm.grabber.extend_piston();
+        Timer.delay(0.3);   
+        s_Arm.periodic(0, 0,false,false);
+        double distance = 2.5;
+        // Drive Away
+        do {
+            drive_backward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, false ));
+        allow_auto = false;
+    }
+    public void midlane(Swerve s_Swerve)
+    {
+        Timer.delay(0.1);
+        s_Arm.upper_arm.driveMotors(-0.2);
+        s_Arm.lower_arm.driveMotors(-0.2);
+        Timer.delay(0.5);
+        s_Arm.grabber.retract_piston();
+        Timer.delay(0.3);
+        s_Arm.grabber.extend_piston();
+        Timer.delay(0.3);   
+        s_Arm.periodic(0, 0,false,false);
         double distance = 2.5;
         // Drive Away
         do {
@@ -51,6 +79,31 @@ public class MidLaneCommand extends AutoCommandBase {
         // Strafe Right
         allow_auto = false;
     }
+
+
+    public void handle_auto_drive(Swerve s_Swerve, String name) {
+        
+        if(name == "Forward")
+        {
+            forward_only(s_Swerve);
+        }
+        else if(name == "Left")
+        {
+
+        }
+        else if(name == "Mid")
+        {
+            midlane(s_Swerve);
+        }
+        else if(name == "Right")
+        {
+
+        }
+        else{
+            midlane(s_Swerve);
+        }
+
+    }
     public void handle_auto_balance(Swerve s_Swerve) {
         double planeInclination = s_Swerve.getPlaneInclination().getDegrees();
         SmartDashboard.putNumber("gyroPitch", planeInclination);
@@ -64,12 +117,13 @@ public class MidLaneCommand extends AutoCommandBase {
         }
     }
 
-    public CommandBase drive(Swerve s_Swerve) {
-        handle_auto_drive(s_Swerve);
+    public CommandBase drive(Swerve s_Swerve, String name) {
+        handle_auto_drive(s_Swerve, name);
         Command instantForward;
         s_Swerve.stop_drive();
         instantForward = new InstantCommand(() -> handle_auto_balance(s_Swerve), s_Swerve);
         Command RepeatedForward = new RepeatCommand(instantForward);
         return Commands.sequence(RepeatedForward);
     }
+
 }

@@ -155,7 +155,7 @@ public final class Constants {
 
     public static final class LowerArm{
         public static int MasterId = 32;
-        public static int FollowerId = 31;
+        public static int FollowerId = 33;
         public static double upwardspeed = 0.15;
         public static double downwardspeed = -0.2;
         public static double gearRatio = 1;
@@ -165,7 +165,7 @@ public final class Constants {
     }
     public static final class UpperArm{
         public static int MasterId = 30;
-        public static int FollowerId = 33;
+        public static int FollowerId = 31;
         public static double upwardspeed = 0.35;
         public static double downwardspeed = -0.4;
         public static double gearRatio = 2.5;

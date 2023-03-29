@@ -1,11 +1,12 @@
 package frc.robot.subsystems.MotorGroups;
 
-import javax.lang.model.util.ElementScanner14;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class LowerArm extends ArmMotorGroup {
+
+    public double setpoint;
+
+
     /**
      * @param masterId
      * @param followerId
@@ -22,7 +23,7 @@ public class LowerArm extends ArmMotorGroup {
      * @return void
      */
     public void stop_arm() {
-        driveMotors(0);
+        super.driveMotors(0);
     }
 
     /**
@@ -52,30 +53,8 @@ public class LowerArm extends ArmMotorGroup {
      *
      * @return void
      */
-    public void driveMotors(double speed) {
-        boolean allow_drive = false;
-        double min = Constants.LowerArm.minRangeOutput;
-        double max = Constants.LowerArm.maxRangeOutput;
-        double arm_position = getPosition().getDegrees();
-        if (speed == 0) {
-            return;
-        }
-        if (arm_position >= min && arm_position <= max) {
-            if (speed == 0) {
-                allow_drive = false;
-            } else {
-                allow_drive = true;
-            }
-        } else if (arm_position <= min && speed > 0) {
-            allow_drive = true;
-        } else if (arm_position >= max && speed < 0) {
-            allow_drive = true;
-        } else {
-            allow_drive = false;
-        }
-        if (allow_drive) {
-            super.driveMotors(speed, max, min);
-        }
+    public void driveMotors(double speed, double driveToPoint) {
+        super.driveMotors(speed);
     }
 
     public void operate_arm(double manualDirection) {

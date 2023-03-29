@@ -1,5 +1,11 @@
 package frc.robot.subsystems.MotorGroups;
 
+import org.w3c.dom.traversal.TreeWalker;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -8,17 +14,20 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public abstract class ArmMotorGroup extends SubsystemBase {
   public DutyCycleEncoder absoluteArmEncoder;
-  private CANSparkMax masterMotor;
-  private CANSparkMax followerMotor;
+  private TalonSRX masterMotor;
+  private TalonSRX followerMotor;
+  //private CANSparkMax masterMotor;
+  //private CANSparkMax followerMotor;
   public String GroupName;
 
-  private final AbsoluteEncoder m_turningEncoder;
+  //private final AbsoluteEncoder m_turningEncoder;
   // private final SparkMaxPIDController m_MotorPidController;
   private double gearRatio;
   // public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel,
@@ -26,12 +35,21 @@ public abstract class ArmMotorGroup extends SubsystemBase {
   private double armOffset;
 
   public ArmMotorGroup(int masterId, int followerId, String name, double gearDiameter, double offset) {
-    masterMotor = new CANSparkMax(masterId, MotorType.kBrushed);
-    followerMotor = new CANSparkMax(followerId, MotorType.kBrushed);
-    masterMotor.restoreFactoryDefaults();
-    followerMotor.restoreFactoryDefaults();
+    masterMotor = new TalonSRX(masterId);
+    followerMotor = new TalonSRX(followerId);
+    masterMotor.configFactoryDefault();
+    followerMotor.configFactoryDefault();
     followerMotor.follow(masterMotor);
-    m_turningEncoder = masterMotor.getAbsoluteEncoder(Type.kDutyCycle);
+
+    masterMotor.setNeutralMode(NeutralMode.Brake);
+    followerMotor.setNeutralMode(NeutralMode.Brake);
+  
+    //masterMotor = new CANSparkMax(masterId, MotorType.kBrushed);
+    //followerMotor = new CANSparkMax(followerId, MotorType.kBrushed);
+    //masterMotor.restoreFactoryDefaults();
+    //followerMotor.restoreFactoryDefaults();
+    //followerMotor.follow(masterMotor);
+    // m_turningEncoder = masterMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
     gearRatio = gearDiameter;
 
@@ -85,22 +103,22 @@ public abstract class ArmMotorGroup extends SubsystemBase {
    */
   public abstract void raise_arm_manually();
 
-  public void driveMotors(double speed, double max, double min) {
-    masterMotor.set(speed);
-    followerMotor.set(speed);
+  public void driveMotors(double speed) {
+    masterMotor.set(ControlMode.PercentOutput,speed);
+    followerMotor.set(ControlMode.PercentOutput,speed);
   }
 
-  public CANSparkMax GetMaster() {
+  public TalonSRX GetMaster() {
     return masterMotor;
   }
 
-  public CANSparkMax GetFollower() {
+  public TalonSRX GetFollower() {
     return followerMotor;
   }
 
   public void setMotor(double percent) {
 
-    masterMotor.set(percent);
+    masterMotor.set(ControlMode.PercentOutput,percent);
   }
 
   /**
@@ -114,14 +132,15 @@ public abstract class ArmMotorGroup extends SubsystemBase {
    * @return position in degrees.
    */
   public Rotation2d getPosition() {
-    double radian = m_turningEncoder.getPosition() * 2 * Math.PI / gearRatio;
-    double modifiedReading = radian + Math.toRadians(armOffset);
+    //double radian = m_turningEncoder.getPosition() * 2 * Math.PI / gearRatio;
+    //double modifiedReading = radian + Math.toRadians(armOffset);
+    double modifiedReading = 0;
     return new Rotation2d(modifiedReading);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", m_turningEncoder.getPosition());
-    SmartDashboard.putNumber(GroupName + " Arm Position", getPosition().getDegrees());
+    //SmartDashboard.putNumber(GroupName + " Arm Raw Absolute Encoder", m_turningEncoder.getPosition());
+    //SmartDashboard.putNumber(GroupName + " Arm Position", getPosition().getDegrees());
   }
 }

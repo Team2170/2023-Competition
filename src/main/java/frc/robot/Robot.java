@@ -7,11 +7,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Auton;
+import frc.robot.subsystems.Swerve;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -30,6 +33,18 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+
+  private static final String kDefaultAuto = "MidLane";
+  private static final String kLeftLaneAuto = "LeftLane";
+  private static final String kMidLaneAuto = "MidLane";
+  private static final String kRightAuto = "RightLane";
+  private static final String kForwardAuto = "Forward";
+  
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -47,6 +62,14 @@ public class Robot extends TimedRobot {
     // Set the data
     m_led.setData(m_ledBuffer);
     m_led.start();
+
+
+    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.addOption("Forward", kForwardAuto);
+    m_chooser.addOption("Left", kLeftLaneAuto);
+    m_chooser.addOption("Mid", kMidLaneAuto);
+    m_chooser.addOption("Right", kRightAuto);
+    SmartDashboard.putData("Auto choices", m_chooser);
   }
 
   /**
@@ -75,28 +98,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // m_robotContainer.s_arm.periodic(0, -0.5,false,false);
-    // Timer.delay(0.25);   
-    // m_robotContainer.s_arm.periodic(0, 0,false,false);
-    // new InstantCommand(() -> m_robotContainer.s_arm.upper_arm.stop_arm());
-    // Timer.delay(8);
-  //   Commands.run(
-  //           () -> m_robotContainer.s_Swerve.drive(m_robotContainer.s_Swerve.getBalanceTranslation(), 0, false, false), m_robotContainer.s_Swerve).until(
-  //           () -> Math.abs(m_robotContainer.s_Swerve.getPlaneInclination().getDegrees()) < Auton.balanceLimitDeg);
-    m_robotContainer.s_Swerve.resetModulesToAbsolute();
-    Timer.delay(0.1);
-    m_robotContainer.s_arm.periodic(0.5, 0.25,false,false);
-    Timer.delay(0.1);
-    m_robotContainer.s_arm.periodic(0.8, 0,false,false);
-    Timer.delay(1.5);
-    m_robotContainer.s_arm.grabber.retract_piston();
-    Timer.delay(0.3);
-    m_robotContainer.s_arm.grabber.extend_piston();
-    Timer.delay(3);   
-    m_robotContainer.s_arm.periodic(0, 0,false,false);
-
-
-
+    m_autoSelected = m_chooser.getSelected();
+    m_robotContainer.setAutonomous(m_autoSelected);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     if(m_autonomousCommand != null)
     {
@@ -117,12 +120,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_autoSelected = m_chooser.getSelected();
+    m_robotContainer.setAutonomous(m_autoSelected);
 
       // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-
-
-    
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

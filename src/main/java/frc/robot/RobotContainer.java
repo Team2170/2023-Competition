@@ -1,31 +1,17 @@
 package frc.robot;
 
-import org.opencv.utils.Converters;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.lib.math.Conversions;
-import frc.robot.Constants.Auton;
-import frc.robot.commands.ExampleAuto;
-import frc.robot.commands.ExampleAuto;
-import frc.robot.commands.LeftLaneCommand;
-import frc.robot.commands.MidLaneCommand;
-import frc.robot.commands.RightLaneCommand;
+import frc.robot.commands.AutoCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
-import pabeles.concurrency.ConcurrencyOps.Reset;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -70,17 +56,16 @@ public class RobotContainer {
     public final RobotArm s_arm = new RobotArm();
     public double StartTime;
 
-    public LeftLaneCommand leftLane;
-    public MidLaneCommand midLane;
-    public RightLaneCommand rightLane;
+    public AutoCommand midLane;
 
     public Command tele;
+
+    public String auto_name;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        midLane = new MidLaneCommand(s_Swerve,s_arm);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -115,8 +100,15 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         lockButton.whileTrue(new RepeatCommand(new InstantCommand(s_Swerve::lockPose, s_Swerve)));
         resetModules.onTrue(new InstantCommand(() -> s_Swerve.hardReset()));
+        lowButton.whileTrue(new RepeatCommand(new InstantCommand(() -> s_arm.lower_arm.driveMotors(0.2) )));
+        midButton.whileTrue(new RepeatCommand(new InstantCommand(() -> s_arm.lower_arm.driveMotors(-0.2) )));
     }
 
+    public void setAutonomous(String name)
+    {
+        auto_name = name;
+        midLane = new AutoCommand(s_Swerve,s_arm);
+    }
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -124,7 +116,8 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return midLane.drive(s_Swerve);
+
+        return midLane.drive(s_Swerve, auto_name );
         
     }
     /**
