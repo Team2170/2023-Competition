@@ -45,7 +45,7 @@ public class AutoCommand extends AutoCommandBase {
         s_Arm.grabber.extend_piston();
         Timer.delay(0.3);   
         s_Arm.periodic(0, 0,false,false);
-        double distance = 4.5;
+        double distance = Constants.Auton.Forward.forwardDistance;
         // Drive Away
         do {
             drive_backward(s_Swerve);
@@ -64,13 +64,65 @@ public class AutoCommand extends AutoCommandBase {
         s_Arm.grabber.extend_piston();
         Timer.delay(0.3);   
         s_Arm.periodic(0, 0,false,false);
-        double distance = 4;
+        double distance = Constants.Auton.MidLane.forwardDistance;
         // Drive Away
         do {
             drive_backward(s_Swerve);
             SmartDashboard.putBoolean("autobalance", allow_auto);
         } while (checkDistanceTraveled(s_Swerve, distance, false ));
-        distance = 2;
+        distance = Constants.Auton.MidLane.backwardDistance;
+        // Drive toward
+        do {
+            drive_forward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, true));
+        // Strafe Right
+        allow_auto = false;
+    }
+    public void leftlane(Swerve s_Swerve)
+    {
+        Timer.delay(0.1);
+        s_Arm.upper_arm.driveMotors(-0.2);
+        s_Arm.lower_arm.driveMotors(-0.2);
+        Timer.delay(0.5);
+        s_Arm.grabber.retract_piston();
+        Timer.delay(0.3);
+        s_Arm.grabber.extend_piston();
+        Timer.delay(0.3);   
+        s_Arm.periodic(0, 0,false,false);
+        double distance = Constants.Auton.MidLane.forwardDistance;
+        // Drive Away
+        do {
+            drive_backward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, false ));
+        distance = Constants.Auton.MidLane.backwardDistance;
+        // Drive toward
+        do {
+            drive_forward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, true));
+        // Strafe Right
+        allow_auto = false;
+    }
+    public void rightlane(Swerve s_Swerve)
+    {
+        Timer.delay(0.1);
+        s_Arm.upper_arm.driveMotors(-0.2);
+        s_Arm.lower_arm.driveMotors(-0.2);
+        Timer.delay(0.5);
+        s_Arm.grabber.retract_piston();
+        Timer.delay(0.3);
+        s_Arm.grabber.extend_piston();
+        Timer.delay(0.3);   
+        s_Arm.periodic(0, 0,false,false);
+        double distance = Constants.Auton.MidLane.forwardDistance;
+        // Drive Away
+        do {
+            drive_backward(s_Swerve);
+            SmartDashboard.putBoolean("autobalance", allow_auto);
+        } while (checkDistanceTraveled(s_Swerve, distance, false ));
+        distance = Constants.Auton.MidLane.backwardDistance;
         // Drive toward
         do {
             drive_forward(s_Swerve);
@@ -81,6 +133,9 @@ public class AutoCommand extends AutoCommandBase {
     }
 
 
+
+
+
     public void handle_auto_drive(Swerve s_Swerve, String name) {
         
         if(name == "Forward")
@@ -89,7 +144,7 @@ public class AutoCommand extends AutoCommandBase {
         }
         else if(name == "Left")
         {
-
+            leftlane(s_Swerve);
         }
         else if(name == "Mid")
         {
@@ -97,7 +152,7 @@ public class AutoCommand extends AutoCommandBase {
         }
         else if(name == "Right")
         {
-
+            rightlane(s_Swerve);
         }
         else{
             midlane(s_Swerve);

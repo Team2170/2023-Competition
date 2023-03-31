@@ -178,6 +178,27 @@ public final class Constants {
 
     public static final class Auton{
         public static final double balanceScale = 5.25, balanceScalePow = 1.0, balanceLimitDeg = 5.0;
+        public static final class LeftLane
+        {
+            public static double forwardDistance = 3.072;
+            public static double backwardDistance = 1.024;
+            public static double strafeDistance = 0.524;
+        }
+        public static final class RightLane
+        {
+            public static double forwardDistance = 3.072;
+            public static double backwardDistance = 1.024;
+            public static double strafeDistance = 0.524;
+        }
+        public static final class MidLane
+        {
+            public static double forwardDistance = 3.072;
+            public static double backwardDistance = 1.024;
+        }
+        public static final class Forward
+        {
+            public static double forwardDistance = 3.072;
+        }
     }
 
     public static final class AutonLeftLane
