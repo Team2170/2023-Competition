@@ -192,8 +192,8 @@ public final class Constants {
         }
         public static final class MidLane
         {
-            public static double forwardDistance = 3.072;
-            public static double backwardDistance = 1.024;
+            public static double forwardDistance = 4.072;
+            public static double backwardDistance = 1.724;
         }
         public static final class Forward
         {
