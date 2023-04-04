@@ -40,6 +40,7 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton slowDown = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton resetModules = new JoystickButton(driver,XboxController.Button.kX.value);
+    private final JoystickButton autoOrient = new JoystickButton(driver, XboxController.Button.kA.value);
  /* Operator Buttons */
     private final JoystickButton loadingButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton lowButton = new JoystickButton(operator, XboxController.Button.kX.value);
@@ -140,6 +141,8 @@ public class RobotContainer {
         s_arm.periodic(lower_part_manual_direction, upper_part_manual_direction,grab_button,release_button);
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
+        
+        s_Swerve.autoOrientEndabled = this.driver.getRawButton(XboxController.Button.kA.value);
     } 
 
 

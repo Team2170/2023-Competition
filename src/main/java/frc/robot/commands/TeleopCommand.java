@@ -78,11 +78,18 @@ public class TeleopCommand extends CommandBase {
                     s_Swerve.drive(heading, 0, false, false);
                 } 
             }else{
-                s_Swerve.drive(
-                    new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
-                    swerve_rotation,
-                    !robotCentricSup.getAsBoolean(),
-                    true);
+                if( s_Swerve.autoOrientEndabled)
+                {
+                    s_Swerve.autoOrient(translationVal, strafeVal);
+                }
+                else{
+                    s_Swerve.drive(
+                        new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
+                        swerve_rotation,
+                        !robotCentricSup.getAsBoolean(),
+                        true);
+                }
+
             }
         }
     }
