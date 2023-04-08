@@ -159,8 +159,8 @@ public final class Constants {
     public static final class LowerArm{
         public static int MasterId = 32;
         public static int FollowerId = 33;
-        public static double upwardspeed = 0.15;
-        public static double downwardspeed = -0.2;
+        public static double upwardspeed = 0.25;
+        public static double downwardspeed = -0.25;
         public static double gearRatio = 1;
         public static double minRangeOutput = 10;
         public static double maxRangeOutput = 33;

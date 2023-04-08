@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.List;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -36,14 +34,14 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
     public NavXSwerve gyro;
     // public NavXSwerve gyro;
 
-    private PhotonCameraWrapper pcw;
+   // private PhotonCameraWrapper pcw;
 
     /**
      * Simulation of the swerve drive.
      */
     public boolean lock_wheels;
 
-    public boolean autoOrientEndabled;
+    public boolean autoOrientEnabled;
 
     /**
      * 
@@ -74,17 +72,13 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getRawYaw(), getModulePositions());
         swerveBalance = new SwerveBalance(Auton.balanceScale, Auton.balanceScalePow);
 
-        autoOrientAngle = 0;
+        //autoOrientAngle = 0;
 
     }
 
     public void autoOrient(double translation,double strafe)
     {
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-        autoOrientAngle = getYaw() + tx ;
-        SmartDashboard.putNumber("Target X", tx);
-        SmartDashboard.putNumber("Turn To Angle ", autoOrientAngle);
-        drive(new Translation2d(translation, strafe), autoOrientAngle, false, true,0.01);
+        
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop,
@@ -243,9 +237,8 @@ public class Swerve<SwerveIMU> extends SubsystemBase {
 
     public double getDistanceTraveled()
     {
-        double sum = 0; 
         double[] modDistances = getModuleDistances();
-        double average = modDistances[0];
+        double average = (modDistances[0]+modDistances[1])/2;
         return average;
     }
 

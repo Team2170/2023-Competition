@@ -142,7 +142,7 @@ public class RobotContainer {
         s_arm.DisplayEncoder();
         s_Swerve.lock_wheels = lockButton.getAsBoolean();
         
-        s_Swerve.autoOrientEndabled = this.driver.getRawButton(XboxController.Button.kA.value);
+        // s_Swerve.autoOrientEnabled = this.driver.getRawButton(XboxController.Button.kA.value);
     } 
 
 

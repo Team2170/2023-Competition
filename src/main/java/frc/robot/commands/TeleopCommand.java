@@ -78,7 +78,7 @@ public class TeleopCommand extends CommandBase {
                     s_Swerve.drive(heading, 0, false, false);
                 } 
             }else{
-                if( s_Swerve.autoOrientEndabled)
+                if( s_Swerve.autoOrientEnabled)
                 {
                     s_Swerve.autoOrient(translationVal, strafeVal);
                 }

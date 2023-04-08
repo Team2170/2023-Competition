@@ -115,7 +115,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     m_robotContainer.autoPeriodic();
-    
   }
 
   @Override
@@ -160,6 +159,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+
     m_robotContainer.autoPeriodic();
   }
 }
