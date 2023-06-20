@@ -49,12 +49,17 @@ public class AutoCommand extends AutoCommandBase {
         s_Arm.grabber.extend_piston();
         Timer.delay(0.3);   
         s_Arm.periodic(0, 0,false,false);
+        //allow_auto = false;
+        
         double distance = Constants.Auton.MidLane.forwardDistance;
         // Drive Away
         do {
             drive_backward(s_Swerve);
             SmartDashboard.putBoolean("autobalance", allow_auto);
         } while (checkDistanceTraveled(s_Swerve, distance, false ));
+        
+        s_Arm.lower_arm.driveMotors(-0.2);
+        Timer.delay(0.15);
         distance = Constants.Auton.MidLane.backwardDistance;
         // Drive toward
         do {

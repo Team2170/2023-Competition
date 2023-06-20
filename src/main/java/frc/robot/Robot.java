@@ -98,8 +98,17 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    Timer.delay(0.1);
+    m_robotContainer.s_arm.upper_arm.driveMotors(-0.2);
+    m_robotContainer.s_arm.lower_arm.driveMotors(-0.2);
+    Timer.delay(0.5);
+    m_robotContainer.s_arm.grabber.retract_piston();
+    Timer.delay(0.3);
+    m_robotContainer.s_arm.grabber.extend_piston();
+    Timer.delay(0.3);   
+    m_robotContainer.s_arm.periodic(0, 0,false,false);
+    Timer.delay(5);
     m_autoSelected = m_chooser.getSelected();
-    m_robotContainer.setAutonomous(m_autoSelected);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     if(m_autonomousCommand != null)
     {
@@ -120,7 +129,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_autoSelected = m_chooser.getSelected();
-    m_robotContainer.setAutonomous(m_autoSelected);
 
       // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();

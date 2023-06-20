@@ -24,7 +24,7 @@ public class TeleopCommand extends CommandBase {
     private BooleanSupplier rightTrigger;
     private boolean set_wheelLock; 
     private BooleanSupplier slowButton;
-
+    private double speedReduction = 0.40;
     private boolean isRunning;
 
     public TeleopCommand(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,

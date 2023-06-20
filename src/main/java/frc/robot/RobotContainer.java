@@ -8,10 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutoCommand;
+import frc.robot.commands.NewAutoCommand;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.commands.Autos.AutoBalancePartial;
+import frc.robot.commands.Autos.DriveBackwardCommandPartial;
+import frc.robot.commands.Autos.DriveForwardCommandPartial;
 import frc.robot.subsystems.RobotArm;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -57,7 +61,7 @@ public class RobotContainer {
     public final RobotArm s_arm = new RobotArm();
     public double StartTime;
 
-    public AutoCommand midLane;
+    public Command midLane;
 
     public Command tele;
 
@@ -104,12 +108,7 @@ public class RobotContainer {
         lowButton.whileTrue(new RepeatCommand(new InstantCommand(() -> s_arm.lower_arm.driveMotors(0.2) )));
         midButton.whileTrue(new RepeatCommand(new InstantCommand(() -> s_arm.lower_arm.driveMotors(-0.2) )));
     }
-
-    public void setAutonomous(String name)
-    {
-        auto_name = name;
-        midLane = new AutoCommand(s_Swerve,s_arm);
-    }
+    
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -117,10 +116,10 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-
-        return midLane.drive(s_Swerve, auto_name );
+        return new SequentialCommandGroup( new AutoBalancePartial(s_Swerve) );
+        //return new SequentialCommandGroup(new DriveBackwardCommandPartial(s_Swerve).withTimeout(5), new DriveForwardCommandPartial(s_Swerve).withTimeout(3), new AutoBalancePartial(s_Swerve));
         
-    }
+    } 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
